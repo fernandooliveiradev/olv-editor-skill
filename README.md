@@ -64,3 +64,9 @@ Copie a pasta **inteira** `skills/editar-video/` (os dois arquivos juntos — o 
 1. Peça o vídeo em linguagem natural (a skill do estúdio define o modo A/B/C, briefing, roteiro e aprovação)
 2. O agente escreve as composições, roda `npm run check`, tira snapshots e confere frame a frame
 3. Renderiza com `npm run render` e entrega o MP4 em `saida/`
+
+## Licença
+
+MIT — use, modifique e distribua livremente, mantendo o aviso de copyright. Veja `LICENSE`.
+
+> As skills do fabricante (HyperFrames) instaladas via `npx hyperframes skills` têm licença própria (MIT do projeto HyperFrames); esta licença cobre este kit.
