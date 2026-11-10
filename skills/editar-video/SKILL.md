@@ -9,6 +9,12 @@ Fluxo completo para três modos de trabalho. Antes de começar, leia `motion-sty
 
 **Entrega única:** a primeira versão já sai completa, ousada e correta — estrutura, contraste, recortes, leitura, sincronia e identidade visual resolvidos — e o que fica para o usuário pedir é gosto (trocar uma foto, um texto, uma cor). As etapas laterais que o vídeo pedir (preparar um asset, remover fundo, recortar fotos, remixar o áudio, re-temporizar por copy novo) fazem parte do fluxo e são executadas direto; conteúdo (roteiro, cortes) continua com aprovação.
 
+## Direção criativa — o anseio do estúdio
+
+O pedido por trás de todo vídeo aqui é o mesmo: **vídeo moderno, com cara de motion graphics de ponta** — transições, efeitos e tipografia bem feitos, com personalidade — tanto em cima de vídeo gravado (modos A e C) quanto puro (modo B). O padrão é ousado: frame 0 já com presença, movimento com causa, tipografia grande, transições que têm origem em cena.
+
+**Regra não é corset.** Templates, receitas e tempos deste guia são o ponto de partida, não a prisão: quando o que faz o vídeo ficar melhor exige desviar (mais respiro numa virada, um efeito fora do vocabulário, uma cena fora do template, uma transição mais simples que a "ousada"), o agente escolhe o caminho do vídeo, decide com critério e registra a decisão no `plano.md`. A barra de aceitação (leitura, contraste, sincronia, propósito) vale sempre; o caminho pode variar.
+
 ## Passo 1: formato, briefing e entrevista
 
 **Interaja antes de produzir.** Faça as perguntas em UMA mensagem só — curtas, com opções e uma recomendação — e espere a resposta. Se o usuário já tiver respondido algo, não pergunte de novo: confirme em uma linha e siga.

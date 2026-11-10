@@ -10,6 +10,7 @@ Consulte este arquivo antes de criar qualquer animação. O objetivo é um visua
 4. **Consistência.** Mesmo easing, mesmas durações e mesma "personalidade" de movimento em todo o vídeo, usando as receitas da §7.
 5. **Respiro.** Deixe o conteúdo parado tempo suficiente para ser lido: pelo menos ~0,3 s por palavra de texto de tela; títulos curtos ficam no mínimo 1 s em cena e a última linha do vídeo, no mínimo 2 s.
 6. **Menos é mais.** Uma ideia por cena, com 2 ou 3 elementos animando em cada momento.
+7. **A regra serve ao vídeo.** Este guia é padrão de partida, não corset: quando o desvio deixa o vídeo melhor (ritmo, efeito, composição), desvie com critério e registre a decisão no `plano.md`. A barra de qualidade — leitura, contraste, sincronia, propósito — não muda.
 
 ## 2. Vocabulário de motion (com o equivalente em GSAP)
 
