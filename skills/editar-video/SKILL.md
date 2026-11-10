@@ -1,6 +1,6 @@
 ---
 name: editar-video
-description: Produz vídeos com Hyperframes (HTML + GSAP → MP4), FFmpeg e Whisper. Use quando o usuário pedir para editar um vídeo gravado com motion graphics, criar um vídeo só em motion graphics, ou misturar os dois. Carrega motion-style.md para manter o visual moderno e templates-gravacao.md (Reels, Stories, Shorts 2026/2027) para estruturar roteiro, gancho, chamada e entrega.
+description: Produz vídeos com Hyperframes (HTML + GSAP → MP4), FFmpeg, faster-whisper e edge-tts. Use quando o usuário pedir para editar um vídeo gravado com motion graphics, criar um vídeo só em motion graphics, ou misturar os dois. Carrega motion-style.md para manter o visual moderno e templates-gravacao.md (Reels, Stories, Shorts 2026/2027) para estruturar roteiro, gancho, chamada e entrega.
 ---
 
 # Editar vídeo com Hyperframes + GSAP
@@ -13,7 +13,7 @@ Fluxo completo para três modos de trabalho. Antes de começar, leia `motion-sty
 
 **Interaja antes de produzir.** Faça as perguntas em UMA mensagem só — curtas, com opções e uma recomendação — e espere a resposta. Se o usuário já tiver respondido algo, não pergunte de novo: confirme em uma linha e siga.
 
-1. **Formato do template** (`templates-gravacao.md`): Reels (25–45 s), Stories (5–7 telas) ou Shorts (20–45 s). O formato define os blocos de tempo, o gancho e a chamada; sem ele, não escreva roteiro. Recomende pelo objetivo: alcance/compartilhamento → Reels; relacionamento e conversão → Stories; busca e ponte para o canal → Shorts.
+1. **Formato do template** (`templates-gravacao.md`): Reels (25–45 s), Stories (5–7 telas) ou Shorts (20–45 s). O formato define os blocos de tempo, o gancho e a chamada; sem ele, não escreva roteiro. Recomende pelo objetivo: alcance/compartilhamento → Reels; relacionamento e conversão → Stories; busca e ponte para o canal → Shorts. Se não for social (16:9, longa do YouTube, apresentação), siga a mesma entrevista e defina a estrutura livre no `plano.md`, mantendo gancho nos 3 primeiros segundos e uma única chamada.
 2. **Objetivo e meta do vídeo** (autoridade, venda, distribuição, conversa).
 3. **Nicho e público** — um tema por vídeo, sempre dentro do mesmo nicho.
 4. **Dor ou resultado** que o vídeo nomeia no gancho, com as palavras que o cliente usaria.
@@ -70,7 +70,7 @@ Se `~/.olv-studio/venv` não existir, rode o setup antes de produzir e avise o u
 ## Fluxo dos modos A e C (vídeo gravado)
 
 1. **Entender.** Transcreva com `olv-asr <audio> -l pt -m small -o assets/audio/transcript.json` (timestamps por palavra, já no formato do HyperFrames; `--text-out assets/audio/transcricao.txt` grava o texto corrido). Fallback quando o setup não estiver disponível: `npx hyperframes transcribe`. Escreva `plano.md` com tema, tom, público e estrutura. No modo C, marque no `plano.md` os momentos que merecem cena de motion em tela cheia (conceitos, números, listas, comparações) e proponha o que mostrar em cada um.
-2. **Áudio.** Remova ruído com FFmpeg (`afftdn` ou `arnndn`) e normalize (`loudnorm`). Deixe a voz natural e presente, calibrando a intensidade do filtro até chegar lá.
+2. **Áudio.** Remova ruído com FFmpeg (`afftdn`, ou `anlmdn` para ruído constante) e normalize (`loudnorm`). Deixe a voz natural e presente, calibrando a intensidade do filtro até chegar lá.
 3. **Cor.** Correção leve e natural (exposição, contraste, balanço de branco, saturação moderada). Comece pelo mínimo e acrescente só o que melhora a imagem.
 4. **Cortes.** Com a transcrição e o `silencedetect`, liste silêncios longos, hesitações, gagueiras, falas repetidas e takes errados. ANTES de cortar, mostre uma lista numerada (início–fim, texto, motivo) e ESPERE a aprovação. Depois aplique, mantendo áudio e vídeo sincronizados e deixando pausas naturais. Gere `limpo.mp4`.
 
@@ -81,7 +81,7 @@ Se `~/.olv-studio/venv` não existir, rode o setup antes de produzir e avise o u
 
 ## Construção da composição
 
-Use `/hyperframes` e `/gsap`. Cada elemento da composição é HTML com atributos de tempo (`data-start`, `data-duration`, `data-track-index`) e a classe `clip` nos elementos cronometrados.
+Use as skills instaladas do HyperFrames (`/hyperframes`, `/hyperframes-cli`); as regras de GSAP vivem em `motion-style.md` §8. Cada elemento da composição é HTML com atributos de tempo (`data-start`, `data-duration`, `data-track-index`) e a classe `clip` nos elementos cronometrados.
 
 1. **Trave a sincronia antes do código.** Abra o beatmap/eventos e mapeie cue → elemento em um quadro (ex.: `frase_2 → entrada da frase 2`, `selo → pop do selo`), no mesmo segundo. Sem beatmap, gere a grade com `npx hyperframes beats` — ele retorna `bpm` (estimado; confira contra a faixa) e `beatTimes`, mas **não** retorna downbeats: derive a fase do compasso você mesmo (ex.: energia da banda grave por batida) e alinhe as fronteiras de cena a múltiplos inteiros de compasso. Cada entrada nasce no cue do SFX correspondente.
 2. **Comece pelo catálogo quando ele não descaracteriza.** Antes de escrever à mão um efeito, transição, card, gráfico ou estilo de legenda com nome, procure no catálogo em **inglês** (`npx hyperframes catalog --query "bar chart count up"` — o catálogo é indexado em inglês; busca em português volta vazia) e use o bloco pronto quando ele servir ao guia de estilo, instalando com `npx hyperframes add <nome>`. Leia `/hyperframes-registry` para os níveis de busca e a instalação. Se o brief pedir originalidade ou uma mecânica própria, monte do zero e relate a decisão no fechamento.
@@ -113,10 +113,10 @@ Use `/hyperframes` e `/gsap`. Cada elemento da composição é HTML com atributo
 - Stories: 5–7 telas de 7–15 s, ao menos uma interação por sequência e instrução clara na última.
 - Shorts: fechamento em loop, título/descrição com o termo de busca e uma ou duas hashtags relevantes + #Shorts.
 
-1. Rode `npm run check` (lint + runtime + layout + motion + contrast + áudio) e leve a zero os erros; revise cada aviso um a um.
+1. Rode `npm run check` (lint + runtime + layout + motion + contraste) e leve a zero os erros; revise cada aviso um a um.
 2. **Snapshot nos três instantes de cada animação nova** — 0,2 s antes do cue, meio da tween e logo após o fim — e leia os frames. Confirme: cada elemento nasce exatamente no cue, as zonas estão limpas e os traços desenham progressivamente. Corrija e repita até fechar.
 3. Rode a checklist de qualidade do `motion-style.md` e relate o que verificou.
-4. **Mixagem:** true-peak limiter com teto −3 dB antes do `loudnorm` (≈ −14 LUFS) — o render preserva o nível do mix.
+4. **Mixagem:** normalização em duas passadas com FFmpeg: primeira mede (`loudnorm=...:print_format=summary`), segunda aplica com os valores medidos (alvo ≈ −14 LUFS, teto −1,5 dBTP, `LRA=9`). Confira o resultado com `ffprobe`/`loudnorm` antes de entregar.
 5. **Preview antes da entrega:** abra o preview (`npx hyperframes preview --background`) e diga que o projeto fica editável ali (ou no app desktop).
 6. Renderize com `npx hyperframes render` e confira o MP4 com `ffprobe` (vídeo + trilha de áudio presentes, quando houver áudio). Informe onde o MP4 ficou.
 7. Liste os arquivos gerados e explique como pedir ajustes (ex.: "título maior", "trocar a cor", "tirar tal corte", "refazer a cena 3").
@@ -124,7 +124,7 @@ Use `/hyperframes` e `/gsap`. Cada elemento da composição é HTML com atributo
 
 ## Regras
 
-- Um tema por vídeo e sempre dentro do mesmo nicho; o formato (Reels, Stories ou Shorts) é decidido antes do roteiro.
+- Um tema por vídeo e sempre dentro do mesmo nicho; o formato social (Reels, Stories ou Shorts) é decidido antes do roteiro — fora dos templates, a estrutura fica no `plano.md`.
 - Nenhuma dependência, venv, modelo ou cache entra na pasta do projeto: ferramentas ficam em `~/.olv-studio` e o projeto guarda só os arquivos do vídeo.
 - Peça aprovação antes de qualquer decisão que mude o conteúdo (principalmente cortes e roteiro).
 - Se um comando falhar, mostre o erro e corrija antes de seguir.

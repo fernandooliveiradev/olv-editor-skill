@@ -9,26 +9,36 @@ VENV="$OLV_HOME/venv"
 MODEL="small"
 WARM=1
 
-for arg in "$@"; do
+say() { printf '\n\033[1m%s\033[0m\n' "$*"; }
+warn() { printf '  ! %s\n' "$*"; }
+ok() { printf '  ✓ %s\n' "$*"; }
+
+while [ $# -gt 0 ]; do
+  arg="$1"
   case "$arg" in
     --no-model) WARM=0 ;;
-    --model=*) MODEL="${arg#*=}" ;;
+    --model=*)
+      val="${arg#*=}"
+      if [ "$val" = "none" ]; then WARM=0; else MODEL="$val"; fi ;;
+    --model)
+      shift
+      if [ $# -gt 0 ]; then
+        if [ "$1" = "none" ]; then WARM=0; else MODEL="$1"; fi
+      fi ;;
     -h|--help)
       cat <<EOF
-Uso: ./setup.sh [--no-model] [--model=small|base|medium|large-v3]
+Uso: ./setup.sh [--no-model] [--model=small|base|medium|large-v3|none]
 
   --no-model     não baixa o modelo do Whisper agora (baixa na 1ª transcrição)
-  --model=NAME   modelo a pré-baixar (padrão: small)
+  --model=NAME   modelo a pré-baixar (padrão: small; "none" = não baixar)
 
 Destino: \$OLV_HOME (padrão: ~/.olv-studio)
 EOF
       exit 0 ;;
+    *) warn "opção desconhecida: $arg"; exit 2 ;;
   esac
+  shift
 done
-
-say() { printf '\n\033[1m%s\033[0m\n' "$*"; }
-warn() { printf '  ! %s\n' "$*"; }
-ok() { printf '  ✓ %s\n' "$*"; }
 
 say "1/5 Ambiente"
 if command -v node >/dev/null 2>&1; then

@@ -19,6 +19,7 @@ def main() -> int:
     ap.add_argument("--device", default="auto", help="auto, cpu ou cuda")
     ap.add_argument("--compute-type", default="int8", help="int8, float16, float32")
     ap.add_argument("--text-out", default=None, help="também grava o texto corrido neste .txt")
+    ap.add_argument("--prompt", default=None, help="dica de vocabulário para o ASR (ex.: nomes próprios, termos do nicho)")
     args = ap.parse_args()
 
     from faster_whisper import WhisperModel
@@ -31,6 +32,7 @@ def main() -> int:
         word_timestamps=True,
         vad_filter=True,
         beam_size=5,
+        initial_prompt=args.prompt,
     )
 
     words = []
@@ -62,7 +64,7 @@ def main() -> int:
         txt.write_text(" ".join(w["text"] for w in words) + "\n", encoding="utf-8")
 
     dur = words[-1]["end"]
-    print(f"{len(words)} palavras · {dur:.1f}s · modelo {args.model} · {time.time() - t0:.1f}s")
+    print(f"idoma {info.language} · áudio {info.duration:.1f}s · {len(words)} palavras · modelo {args.model} · {time.time() - t0:.1f}s")
     print(f"salvo em {out}")
     return 0
 

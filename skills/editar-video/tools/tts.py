@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Gera narração com edge-tts (vozes neurais da Microsoft) e timestamps por palavra.
 
+Requer rede no momento da síntese (API pública, sem chave).
 Saída: MP3 em `--out` e, se pedido, JSON de palavras [{id, text, start, end}] em `--words-out`.
 As palavras vêm dos eventos WordBoundary da própria síntese — não precisa transcrever de novo.
 """

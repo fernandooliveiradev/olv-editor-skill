@@ -145,5 +145,5 @@ Cada cena que repete a receita reforça a identidade do vídeo. **Duas ou três 
 - [ ] Cada foto recortada para o assunto do texto e a logo lida com folga no seu fundo
 - [ ] Cores, fontes, easings e durações iguais para elementos do mesmo tipo
 - [ ] Duas ou três transições, suaves e repetidas nas mesmas viradas
-- [ ] Áudio com fade nas emendas e mix com true-peak limiter (teto −3 dB) antes do loudnorm
+- [ ] Áudio com fade nas emendas e mix normalizado (≈ −14 LUFS, teto −1,5 dBTP) — conferido no MP4 final
 - [ ] `npm run check` sem erros, avisos revisados um a um, e render concluído
