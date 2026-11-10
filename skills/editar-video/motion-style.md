@@ -12,7 +12,11 @@ Consulte este arquivo antes de criar qualquer animação. O objetivo é um visua
 6. **Menos é mais.** Uma ideia por cena, com 2 ou 3 elementos animando em cada momento.
 7. **A regra serve ao vídeo.** Este guia é padrão de partida, não corset: quando o desvio deixa o vídeo melhor (ritmo, efeito, composição), desvie com critério e registre a decisão no `plano.md`. A barra de qualidade — leitura, contraste, sincronia, propósito — não muda.
 
-## 2. Vocabulário de motion (com o equivalente em GSAP)
+## 2. Dicionário de motion e edição
+
+O dicionário com que o estúdio nomeia o que entra no vídeo — termos em português e inglês, com sinônimos, para o briefing e o `plano.md` falarem a mesma língua. A tabela 2.1 é a camada de motion graphics em GSAP (o coração do HyperFrames); as demais trazem corte, transição, câmera, imagem, composição, tipografia, áudio e fluxo de pós, cada uma com **como executar aqui** (HyperFrames, FFmpeg ou asset).
+
+### 2.1 Motion graphics (GSAP)
 
 | Técnica | O que é | Exemplo em GSAP |
 |---|---|---|
@@ -36,6 +40,124 @@ Consulte este arquivo antes de criar qualquer animação. O objetivo é um visua
 | Overlap | Animações que começam antes da anterior terminar | posições relativas na timeline (`"-=0.2"`) |
 | Câmera falsa | Zoom/pan lento sobre um bloco | `scale` 1 → 1.05 durante a cena toda |
 | Transições | Wipe, zoom-through, flash branco, whip, shader | blocos do catálogo (`npx hyperframes add ...`) |
+
+### 2.2 Cortes e tempo (edição)
+
+| Técnica | O que é / quando usar | Como fazer aqui |
+|---|---|---|
+| **Standard Cut** (corte seco) | Troca imediata entre planos, sem transição — mudança rápida de assunto ou tomada | dois clips consecutivos na timeline |
+| **Jump Cut** | Corte dentro do mesmo enquadramento para remover tempo — vídeo falado, ritmo acelerado | mesmo enquadramento, clips consecutivos (cortar no silêncio da voz) |
+| **Match Cut** | Conecta planos por forma, posição, cor ou movimento — virada conceitual elegante | alinhar ponto focal/posição entre o fim do clip A e a entrada do B |
+| **Cross-Cut** (edição paralela) | Alterna ações que acontecem em lugares diferentes — narrativas paralelas | clips das duas fontes alternando no ritmo do argumento |
+| **J-Cut** | O áudio da próxima cena começa antes da troca visual — transição narrativa suave | clip de áudio com `data-start` antes do corte de vídeo |
+| **L-Cut** | O áudio da cena anterior continua sobre a imagem seguinte — entrevistas | clip de áudio que termina depois do corte de vídeo |
+| **Cutaway** (plano de apoio) | Detalhe ou imagem complementar e volta à ação — cobrir cortes, ilustrar fala | clip curto de detalhe intercalado |
+| **Montage** | Sequência de planos curtos que resume tempo, processo ou variedade — transformação, rotina | clips curtos, whoosh/hit por entrada, ritmo amarrado à trilha |
+| **Speed Ramping** | Varia a velocidade de um mesmo clipe — ação, ênfase, passagem de tempo | pré-renderizar os trechos com FFmpeg (`setpts=0.5*PTS` para 2×, `setpts=2*PTS` para ½) e montar a rampa como clips; em motion, simular comprimindo/expandido o tempo dos tweens |
+| **Ripple / Rolling Trim** | Ajusta a duração deslocando os seguintes (ripple) ou move a emenda sem mudar a duração total (rolling) — refinar ritmo | re-temporizar a composição: `data-start`/`data-duration` dos clips |
+| **Punch-In** | Zoom rápido no mesmo plano para enfatizar detalhe ou fala | `scale` 1 → 1,06–1,15 em 0,2–0,4 s no wrapper do clip |
+
+### 2.3 Transições
+
+| Técnica | O que é / quando usar | Como fazer aqui |
+|---|---|---|
+| **Fade In/Out** | Entrada ou saída gradual de preto/transparência — abertura, encerramento, pausa | `opacity` do palco, 0,2–1,5 s |
+| **Cross Dissolve** | Sobreposição gradual entre duas imagens — passagem de tempo, tom contemplativo | dois clips sobrepostos com opacidades complementares |
+| **Wipe** (varredura) | Uma linha ou forma revela a próxima cena — transição gráfica | varredura de `clip-path`, ou bloco do catálogo |
+| **Iris** | A cena abre ou fecha em forma circular — revelação pontual, estilo retrô | `clip-path: circle()` animada |
+| **Slide / Push** | Uma cena desloca a outra lateral/verticalmente — interfaces, apresentações | `x`/`y` de um palco empurrando o outro |
+| **Zoom Through** | Aproximação/recuo que conecta duas cenas — continuidade por ponto focal | `scale` 1 → 1,6 + blur no pico; a cena seguinte pousa do mesmo movimento |
+| **Whip Pan** | Panorâmica muito rápida com borrão direcional — energia, mudança de cena | `x` em alta velocidade + `data-motion-blur="on"` (ou bloco "whip") |
+| **Glitch** | Ruído e artefatos digitais simulam interrupção de sinal — estética digital, **com moderação** | bloco de shader do catálogo |
+| **Light Leak** | Clarões luminosos simulam luz na lente/película — clima orgânico, cinematográfico | asset PNG/MP4 com `mix-blend-mode: screen` + fade |
+| **Flash / White Hit** | Clarão branco instantâneo na virada — energia, impacto | overlay branco 0,1–0,2 s no cue |
+
+### 2.4 Câmera e espaço
+
+| Técnica | O que é / quando usar | Como fazer aqui |
+|---|---|---|
+| **Pan** | Câmera gira horizontalmente — revelar espaço, acompanhar objeto | `x` no wrapper do conteúdo (frame fixo) |
+| **Tilt** | Câmera gira verticalmente — revelar altura, acompanhar movimento | `y` no wrapper do conteúdo |
+| **Dolly In/Out** | Aproximação/recuo do sujeito — profundidade, ênfase | `scale` lento durante a cena (ver "Câmera falsa" em 2.1) |
+| **Tracking / Follow** | Câmera acompanha o sujeito com relação espacial constante — ação | `x`/`y` seguindo o ponto, mesmo ease do movimento |
+| **Parallax 3D** | Camadas em profundidades diferentes em velocidades distintas — profundidade em imagens e layouts | translado proporcional ao fator de profundidade (longe anda menos) — ver "Parallax" em 2.1 |
+| **Smooth Zoom** | Zoom com aceleração/desaceleração controladas — direcionar atenção sem brusquidão | `scale` com `expo.inOut`/`power2.inOut` |
+| **Drone Fly-By** | Movimento aéreo simulado, deslocamento contínuo — paisagens, estabelecimento | `x`/`y` longo + `rotation` leve sobre o clip |
+| **Pendulum** | Elemento oscila suave em torno de um eixo — flutuação, movimento secundário | `rotation` ±3–6° com `yoyo` (ciclos fixos, determinístico) |
+| **Dutch Angle** | Horizonte inclinado — tensão, instabilidade; evitar em conteúdo neutro | `rotation` leve (2–5°) do frame, com propósito declarado |
+| **Stabilization** | Reduz tremores de câmera — vídeo de mão | FFmpeg `vidstab` (bruto); em motion puro, não se aplica |
+
+### 2.5 Imagem, cor e textura
+
+| Técnica | O que é / quando usar | Como fazer aqui |
+|---|---|---|
+| **Color Correction** | Exposição, balanço de branco e contraste para consistência — padronização técnica | etapa "Cor" dos modos A/C: FFmpeg `eq`/`colorbalance`, comece pelo mínimo |
+| **Color Grading** | Atmosfera e identidade por paleta — construção de clima | `curves`/`colorbalance` + comparação visual com `hyperframes grade-compare` |
+| **LUT** | Preset que transforma a paleta — padronizar look | `lut3d` no FFmpeg; validar pele e tons críticos frame a frame |
+| **White Balance** | Corrige dominantes de temperatura — naturalidade entre planos | `colortemperature`/`colorchannelmixer` |
+| **Exposure & Contrast** | Luminosidade e separação claro/escuro — legibilidade | `eq=brightness=…:contrast=…` |
+| **Saturation & Tint** | Intensidade cromática e desvio de matiz — identidade visual | `eq=saturation=…:hue=…` |
+| **Chroma Key** | Remove fundo por cor — green screen, composição | `chromakey` no FFmpeg |
+| **Film Grain / Noise** | Textura de película — look analógico | overlay de ruído SVG (como o estúdio usa) ou FFmpeg `noise` |
+| **Sharpening** | Contraste de borda para realçar detalhe — corrigir suavidade leve; evitar halos | `unsharp` com força mínima |
+| **Motion Blur** | Rastro em objetos/câmera em movimento — movimentos rápidos, transições | `data-motion-blur="on"` na raiz (blur de render) — ver §8 |
+| **Depth / Gaussian Blur** | Desfoca áreas/camadas simulando profundidade de campo — separação de planos | CSS `filter: blur()` na camada de fundo ou elemento fora de foco |
+| **Letterbox / Pillarbox** | Barras horizontais/verticais — decisão estética, preservar proporção | barras na composição; é decisão de direção, registrar no `plano.md` |
+
+### 2.6 Composição e camadas
+
+| Técnica | O que é / quando usar | Como fazer aqui |
+|---|---|---|
+| **Compositing** | Combina vídeo, gráficos, texto e imagens — motion design multicamada | a própria composição: clips, overlays e legendas em trilhas |
+| **Alpha Channel** | Transparência por pixel — sobreposições, exportar com transparência | WebM transparente: `hyperframes render --format webm` |
+| **Blending Modes** | Camadas se combinam por regras de cor/luz — texturas, brilhos, sobreposições | `mix-blend-mode: screen/overlay/multiply` |
+| **Masking** | Revela/oculta regiões por forma ou trajetória — revelação de texto, recortes | = "Mask reveal" em 2.1: animar `clip-path` |
+
+### 2.7 Tipografia e grafismos
+
+| Técnica | O que é / quando usar | Como fazer aqui |
+|---|---|---|
+| **Lower Third** | Identifica pessoa, função ou contexto na região inferior — entrevistas, apresentações | tarja nome + função, entrada por 2.1 (slide + blur) |
+| **Video Inside Text** | Letra preenchida com imagem em movimento — títulos de impacto | vídeo mascarado no texto (`background-clip: text` ou `clip-path`) |
+| **Highlight Text** | Palavra destacada por cor, luz ou estilo — ênfase de mensagem | = palavra ativa do karaokê (§5) ou `color`/`scale` no cue |
+| **Elastic Text (forward/back)** | Texto expande e retrai ao entrar/sair — ênfase curta | `scale` com `back.out(1.4–1.7)` |
+| **Floating Objects / Text** | Micro movimentos e rotações suaves — dar vida a elementos estáticos | `y`/`rotation` lentos, ciclos fixos, `sine.inOut` |
+| **Auto Captions / Subtitles** | Fala transcrita e sincronizada — social, acessibilidade | §5 + `transcript.json` (karaokê palavra por palavra) |
+
+### 2.8 Áudio, efeitos e mixagem
+
+| Técnica | O que é / quando usar | Como fazer aqui |
+|---|---|---|
+| **Riser** | Som cresce antecipando o evento — pré-revelação | SFX com fade-in terminando no cue |
+| **Hit / Impact** | Som pontual na entrada ou colisão visual — ênfase em título/objeto | SFX exatamente no cue (≤ 1 frame de folga) |
+| **Whoosh** | Som curto acompanhando movimento — pan, zoom, slide | SFX amarrado à transição |
+| **Drone** | Camada sustentada de atmosfera — suspense, tensão | bed contínuo com fade |
+| **Audio Ducking** | Música abaixa quando a voz entra — narração clara | `sidechaincompress` (voz → música) ou volume manual por trecho |
+| **Noise Cleanup** | Reduz chiado, zumbido e ruído constante — melhorar gravação de voz | `afftdn`/`anlmdn` (etapa "Áudio" dos modos A/C) |
+| **TTS** | Narração sintética a partir de texto — narração sem gravação | `olv-tts` (voz pt-BR + palavras com tempo) |
+| **Voice Cloning** | Voz sintetizada a partir de amostras — **só com consentimento e direitos** | ferramenta externa; validar autorização antes de usar |
+| **Foley** | Sons sincronizados com ações visuais — passos, objetos | SFX no cue da ação |
+| **Ambience / Natural Sound** | Som contínuo do lugar — realismo, imersão | bed de ambiente por baixo da cena |
+| **MOS** | Trecho intencionalmente sem som — pausa expressiva, autoplay social | áudio retirado no trecho; a imagem carrega |
+
+### 2.9 Fluxo e IA de pós-produção
+
+| Técnica | O que é / quando usar | Como fazer aqui |
+|---|---|---|
+| **A-Roll** | Plano principal (apresentador, entrevista, demo) — conteúdo falado | o vídeo gravado na trilha principal |
+| **B-Roll** | Imagens de apoio que ilustram a fala — explicativos, entrevistas | clips do catálogo, stock ou cenas de motion por cima |
+| **Assembly Cut** | Primeira organização conforme o roteiro — primeira versão | roteiro do `plano.md` → timeline rascunho |
+| **Rough Cut** | Ordem e ritmo ajustados, sem acabamento — revisão estrutural | versão revisável no preview (`preview --background`) |
+| **Fine Cut / Picture Lock** | Visual aprovado e travado antes do acabamento — pré-finalização | só depois da aprovação do cliente: acabamento + render |
+| **Stringout / Selects** | Agrupa as melhores tomadas/momentos — organizar material bruto | seleção por transcrição + `silencedetect` |
+| **Scene Detection** | Identifica mudanças de cena — separar planos automaticamente | `hyperframes measure` ou FFmpeg `select='gt(scene,0.4)'` |
+| **Silence Removal** | Detecta e remove pausas silenciosas — acelerar vídeo falado | `silencedetect` + lista de cortes (com aprovação) |
+| **Filler Word Removal** | Remove hesitações e palavras de preenchimento — limpar fala | na mesma lista de cortes; nunca alterar o sentido |
+| **Speaker Diarization** | Identifica quem fala e em quais intervalos — entrevistas | `hyperframes transcribe --speakers` (engine heygen) |
+| **Text-Based Editing** | Editar fala e vídeo pela transcrição — podcasts, entrevistas | modo A: a transcrição dirige os cortes |
+| **Agentic Editing** | O agente interpreta o briefing e executa a edição — tarefas claras + validação humana | esta skill: o agente produz, o cliente aprova conteúdo |
+
+**Como consultar o dicionário:** nomeie a técnica no `plano.md` pelo termo (pt/en/sinônimo) e escolha sempre efeito com função clara na edição — nenhum efeito decorativo sem propósito (princípio 2). Se uma técnica não tem caminho direto aqui, monte combinando as primitivas de 2.1.
 
 ## 3. Tempos de referência
 

@@ -5,7 +5,7 @@ description: Produz vídeos com Hyperframes (HTML + GSAP → MP4), FFmpeg, faste
 
 # Editar vídeo com Hyperframes + GSAP
 
-Fluxo completo para três modos de trabalho. Antes de começar, leia `motion-style.md` e `templates-gravacao.md` (na mesma pasta desta skill): o primeiro rege o vocabulário, o ritmo, o layout em zonas, as receitas de tela e as regras técnicas de GSAP; o segundo rege a estrutura do roteiro, o gancho, a chamada e a checklist de entrega de cada formato social — eles são o padrão do estúdio.
+Fluxo completo para três modos de trabalho. Antes de começar, leia `motion-style.md` e `templates-gravacao.md` (na mesma pasta desta skill): o primeiro rege o dicionário de motion e edição, o ritmo, o layout em zonas, as receitas de tela e as regras técnicas de GSAP; o segundo rege a estrutura do roteiro, o gancho, a chamada e a checklist de entrega de cada formato social — eles são o padrão do estúdio.
 
 **Entrega única:** a primeira versão já sai completa, ousada e correta — estrutura, contraste, recortes, leitura, sincronia e identidade visual resolvidos — e o que fica para o usuário pedir é gosto (trocar uma foto, um texto, uma cor). As etapas laterais que o vídeo pedir (preparar um asset, remover fundo, recortar fotos, remixar o áudio, re-temporizar por copy novo) fazem parte do fluxo e são executadas direto; conteúdo (roteiro, cortes) continua com aprovação.
 
