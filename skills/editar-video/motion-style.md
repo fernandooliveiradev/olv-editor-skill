@@ -269,4 +269,5 @@ Cada cena que repete a receita reforça a identidade do vídeo. **Duas ou três 
 - [ ] Cores, fontes, easings e durações iguais para elementos do mesmo tipo
 - [ ] Duas ou três transições, suaves e repetidas nas mesmas viradas
 - [ ] Áudio com fade nas emendas e mix normalizado (≈ −14 LUFS, teto −1,5 dBTP) — conferido no MP4 final
+- [ ] Sistema de layout (eixo, margens, zonas) registrado no `plano.md` e seguido por todas as cenas; estado final de cada cena olhado no snapshot (`robustez.md`)
 - [ ] `npm run check` sem erros, avisos revisados um a um, e render concluído

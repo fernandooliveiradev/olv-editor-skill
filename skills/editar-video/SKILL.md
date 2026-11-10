@@ -1,11 +1,11 @@
 ---
 name: editar-video
-description: Produz vídeos com Hyperframes (HTML + GSAP → MP4), FFmpeg, faster-whisper e edge-tts. Use quando o usuário pedir para editar um vídeo gravado com motion graphics, criar um vídeo só em motion graphics, ou misturar os dois. Carrega motion-style.md para manter o visual moderno e templates-gravacao.md (Reels, Stories, Shorts 2026/2027) para estruturar roteiro, gancho, chamada e entrega.
+description: Produz vídeos com Hyperframes (HTML + GSAP → MP4), FFmpeg, faster-whisper e edge-tts. Use quando o usuário pedir para editar um vídeo gravado com motion graphics, criar um vídeo só em motion graphics, ou misturar os dois. Carrega motion-style.md para manter o visual moderno, robustez.md para verificar qualquer entrega com evidência (vale para qualquer modelo) e templates-gravacao.md (Reels, Stories, Shorts 2026/2027) para estruturar roteiro, gancho, chamada e entrega.
 ---
 
 # Editar vídeo com Hyperframes + GSAP
 
-Fluxo completo para três modos de trabalho. Antes de começar, leia `motion-style.md` e `templates-gravacao.md` (na mesma pasta desta skill): o primeiro rege o dicionário de motion e edição, o ritmo, o layout em zonas, as receitas de tela e as regras técnicas de GSAP; o segundo rege a estrutura do roteiro, o gancho, a chamada e a checklist de entrega de cada formato social — eles são o padrão do estúdio.
+Fluxo completo para três modos de trabalho. Antes de começar, leia `motion-style.md`, `templates-gravacao.md` e `robustez.md` (na mesma pasta desta skill): o terceiro é só processo e verificação (sistema de layout em números, medir em vez de supor, ciclo de snapshot e relato honesto) e não impõe visual algum; o primeiro rege o dicionário de motion e edição, o ritmo, o layout em zonas, as receitas de tela e as regras técnicas de GSAP; o segundo rege a estrutura do roteiro, o gancho, a chamada e a checklist de entrega de cada formato social — eles são o padrão do estúdio.
 
 **Entrega única:** a primeira versão já sai completa, ousada e correta — estrutura, contraste, recortes, leitura, sincronia e identidade visual resolvidos — e o que fica para o usuário pedir é gosto (trocar uma foto, um texto, uma cor). As etapas laterais que o vídeo pedir (preparar um asset, remover fundo, recortar fotos, remixar o áudio, re-temporizar por copy novo) fazem parte do fluxo e são executadas direto; conteúdo (roteiro, cortes) continua com aprovação.
 
@@ -107,6 +107,8 @@ Use as skills instaladas do HyperFrames (`/hyperframes`, `/hyperframes-cli`); as
 8. **Uma ideia por cena**, com 2 ou 3 elementos animando em cada momento.
 
 ## Verificação e entrega
+
+**Verificação com evidência (`robustez.md`):** registre o sistema de layout no `plano.md` antes das cenas, olhe o frame final de cada cena e liste os defeitos (ou a ausência deles) antes de seguir; sem visão, use medidas do DOM e peça a conferência visual ao usuário, dizendo isso na entrega. Defeito que se repete em várias cenas é do sistema — corrija a causa comum.
 
 **Barra de aceitação — fecha inteira antes de mostrar qualquer versão:** texto exato do cliente (e todo texto novo com leitura recalculada e cues reposicionados), decoração no vocabulário do logo e sem retângulo de fundo atrás de arte, fotos recortadas para o assunto, logo lida com folga no seu fundo, movimento ousado onde a receita pede, contraste AA (≥3:1 em texto grande, ≥4,5:1 em texto pequeno) e sincronia nos cues. Frame 0 mostra o gancho (arte, produto ou linha), nunca uma tela vazia.
 

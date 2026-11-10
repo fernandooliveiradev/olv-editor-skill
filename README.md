@@ -37,7 +37,7 @@ seu texto + áudio (ou voz de IA)
 git clone https://github.com/fernandooliveiradev/olv-editor-skill
 cp -r olv-editor-skill/skills/editar-video ~/.config/opencode/skills/
 #   (outro harness: copie para a pasta de skills dele — Claude Code usa .claude/skills/,
-#    Cursor e afins: anexe SKILL.md + motion-style.md + templates-gravacao.md)
+#    Cursor e afins: anexe SKILL.md + motion-style.md + templates-gravacao.md + robustez.md)
 
 # 2) O motor de render (HyperFrames)
 npx hyperframes skills
@@ -80,6 +80,7 @@ olv-doctor                                                     # diagnóstico
 | `SKILL.md` | o fluxo completo: briefing, produção por modo (A/B/C), verificação, entrega |
 | `motion-style.md` | padrão de movimento, layout em zonas e regras de GSAP |
 | `templates-gravacao.md` | estruturas de Reels, Stories e Shorts (2026/2027) |
+| `robustez.md` | processo e verificação para qualquer modelo (sem impor visual) |
 | `setup.sh` + `tools/` | bootstrap da máquina e os comandos `olv-*` |
 
 ## Requisitos
