@@ -8,7 +8,8 @@ kit-skill-olv/
 ├── README.md                  ← este arquivo
 ├── skills/editar-video/       ← a skill do estúdio (copie a pasta inteira)
 │   ├── SKILL.md
-│   └── motion-style.md
+│   ├── motion-style.md
+│   └── templates-gravacao.md
 └── vendor-skills-lock.json    ← referência de versões das skills do HyperFrames
 ```
 
@@ -35,15 +36,15 @@ npx hyperframes skills update <nome>  # instala/atualiza uma skill específica (
 
 ## 3. Instalar a skill do estúdio no harness
 
-Copie a pasta **inteira** `skills/editar-video/` (os dois arquivos juntos — o `SKILL.md` referencia `motion-style.md` por caminho relativo).
+Copie a pasta **inteira** `skills/editar-video/` (os três arquivos juntos — o `SKILL.md` referencia `motion-style.md` e `templates-gravacao.md` por caminho relativo).
 
 | Harness | Onde colocar |
 |---|---|
 | OpenCode | `.opencode/skills/editar-video/` |
 | Claude Code | `.claude/skills/editar-video/` |
-| Cursor | anexar como regra: `.cursor/rules/editar-video.mdc` (SKILL.md como corpo + caminho do motion-style.md) |
-| Codex / harness com AGENTS.md | referenciar no `AGENTS.md` do projeto: “siga `skills/editar-video/SKILL.md` + `motion-style.md`” |
-| Qualquer outro | colar `SKILL.md` + `motion-style.md` como instruções de sistema/contexto do agente |
+| Cursor | anexar como regra: `.cursor/rules/editar-video.mdc` (SKILL.md como corpo + caminhos de motion-style.md e templates-gravacao.md) |
+| Codex / harness com AGENTS.md | referenciar no `AGENTS.md` do projeto: “siga `skills/editar-video/SKILL.md` + `motion-style.md` + `templates-gravacao.md`” |
+| Qualquer outro | colar `SKILL.md` + `motion-style.md` + `templates-gravacao.md` como instruções de sistema/contexto do agente |
 
 ## 4. O que o harness precisa saber fazer
 
@@ -61,7 +62,7 @@ Copie a pasta **inteira** `skills/editar-video/` (os dois arquivos juntos — o 
 
 ## 6. Fluxo depois de instalado
 
-1. Peça o vídeo em linguagem natural (a skill do estúdio define o modo A/B/C, briefing, roteiro e aprovação)
+1. Peça o vídeo em linguagem natural — a skill entrevista o usuário (formato, nicho, dor, prova, chamada), escolhe o template de Reels/Stories/Shorts e escreve o roteiro para aprovação
 2. O agente escreve as composições, roda `npm run check`, tira snapshots e confere frame a frame
 3. Renderiza com `npm run render` e entrega o MP4 em `saida/`
 
