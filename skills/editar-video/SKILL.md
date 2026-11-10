@@ -11,9 +11,11 @@ Fluxo completo para três modos de trabalho. Antes de começar, leia `motion-sty
 
 ## Direção criativa — o anseio do estúdio
 
-O pedido por trás de todo vídeo aqui é o mesmo: **vídeo moderno, com cara de motion graphics de ponta** — transições, efeitos e tipografia bem feitos, com personalidade — tanto em cima de vídeo gravado (modos A e C) quanto puro (modo B). O padrão é ousado: frame 0 já com presença, movimento com causa, tipografia grande, transições que têm origem em cena.
+**Cada vídeo é feito do que o cliente pede — não existe template fixo.** A única coisa que deve estar presente em toda entrega é **criatividade**: o vídeo tem que parecer feito para aquela história, nunca montado numa forma pronta.
 
-**Regra não é corset.** Templates, receitas e tempos deste guia são o ponto de partida, não a prisão: quando o que faz o vídeo ficar melhor exige desviar (mais respiro numa virada, um efeito fora do vocabulário, uma cena fora do template, uma transição mais simples que a "ousada"), o agente escolhe o caminho do vídeo, decide com critério e registra a decisão no `plano.md`. A barra de aceitação (leitura, contraste, sincronia, propósito) vale sempre; o caminho pode variar.
+O guia não define visual, define **nível**: moderno, bem feito, com cara de motion graphics de ponta — tipografia grande, efeitos com propósito, transições que têm origem em cena, sincronia com a fala. O caminho é sempre livre: referência do cliente, marca, assunto, mood — o que servir. Os templates de gravação organizam o **roteiro** de cada formato social (blocos, gancho, chamada); o **visual** nasce por projeto no guia de estilo (`motion-style.md` §4) e sai aprovado pelo cliente.
+
+**Regra não é corset:** quando o desvio deixa o vídeo melhor, o caminho do vídeo vence — com critério, decisão registrada no `plano.md`, e a barra de aceitação (leitura, contraste, sincronia, propósito) sempre fechando.
 
 ## Passo 1: formato, briefing e entrevista
 
