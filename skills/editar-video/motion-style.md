@@ -85,7 +85,7 @@ O dicionário com que o estúdio nomeia o que entra no vídeo — termos em port
 | **Drone Fly-By** | Movimento aéreo simulado, deslocamento contínuo — paisagens, estabelecimento | `x`/`y` longo + `rotation` leve sobre o clip |
 | **Pendulum** | Elemento oscila suave em torno de um eixo — flutuação, movimento secundário | `rotation` ±3–6° com `yoyo` (ciclos fixos, determinístico) |
 | **Dutch Angle** | Horizonte inclinado — tensão, instabilidade; evitar em conteúdo neutro | `rotation` leve (2–5°) do frame, com propósito declarado |
-| **Stabilization** | Reduz tremores de câmera — vídeo de mão | FFmpeg `vidstab` (bruto); em motion puro, não se aplica |
+| **Stabilization** | Reduz tremores de câmera — vídeo de mão | FFmpeg `vidstabdetect` + `vidstabtransform` (2 passadas); em motion puro, não se aplica |
 
 ### 2.5 Imagem, cor e textura
 
