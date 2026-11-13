@@ -58,7 +58,7 @@ chmod +x "$OLV_HOME/tools/"*.py
 # depois de um `git pull` e avisa quando o estúdio está rodando código velho.
 printf 'SKILL_DIR=%s\n' "$SKILL_DIR" > "$OLV_HOME/config"
 if command -v sha256sum >/dev/null 2>&1; then HASHER="sha256sum"; else HASHER="shasum -a 256"; fi
-printf 'HASHER=%s\n' "$HASHER" >> "$OLV_HOME/config"
+printf 'HASHER="%s"\n' "$HASHER" >> "$OLV_HOME/config"
 ( cd "$OLV_HOME/tools" && $HASHER ./*.py > "$OLV_HOME/tools.sha256" )
 ok "ferramentas copiadas e versionadas (rerode o setup depois de atualizar a skill)"
 

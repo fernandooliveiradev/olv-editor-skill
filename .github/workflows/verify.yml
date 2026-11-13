@@ -1,0 +1,23 @@
+name: verificar receitas
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  receitas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Sintaxe do setup e das ferramentas
+        run: |
+          bash -n skills/editar-video/setup.sh
+          python3 -m py_compile skills/editar-video/tools/*.py
+          python3 -c "import json;json.load(open('skills/editar-video/perfis/brand.example.json'))"
+      - name: Lint das receitas de tela
+        run: bash tests/run.sh

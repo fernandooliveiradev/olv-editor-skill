@@ -102,6 +102,10 @@ Stories é **sequência de telas independentes**, não um filme:
    vídeo**. Deixe a área deles livre (topo e rodapé, §6 do `motion-style.md`), escreva no vídeo apenas a
    pergunta ou o convite, e entregue uma nota dizendo **qual sticker entra em qual tela**.
 4. A última tela entrega a instrução da chamada em texto; o botão é colocado no app sobre a área livre.
+5. **Tela parada é intencional.** Stories é para ler, não para dançar: depois da entrada, o bloco fica
+   parado. Marque o conteúdo com `data-hold` (ex.: `#story-01-conteudo`) — sem isso o `check` avisa
+   `dead_stretch` em toda tela com mais de 3 s sem mudança, e o aviso se repete por tela. `data-hold`
+   documenta a intenção e cala o aviso sem inventar movimento.
 
 ---
 

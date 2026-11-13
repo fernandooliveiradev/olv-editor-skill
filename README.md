@@ -104,6 +104,24 @@ olv-doctor --selftest                                               # diagnósti
 - Internet no primeiro uso (baixa o HyperFrames, o Python 3.12 via `uv` e o modelo do Whisper ≈ 500 MB)
 - Python 3.9–3.13 (com `uv` não precisa instalar nada: ele traz o próprio)
 
+## Verificação — o que foi testado, e como
+
+| Fluxo | Evidência |
+|---|---|
+| Receitas de tela | `lint` 0 erros/0 avisos e `check` 0 erros nas seis; olhadas em folha de contato |
+| Instalação | `setup.sh` com Python 3.12 via `uv`, faster-whisper 1.2.1, edge-tts 7.3.1 |
+| Diagnóstico | `olv-doctor --selftest`: síntese de voz ✓ e transcrição ✓; detecta ferramenta velha após atualizar a skill |
+| Modo B (motion puro) | 12 s, 3 cenas + legenda karaokê; `check` 0 erros; render 1080×1920; mix −14,0 LUFS |
+| Modo A (vídeo gravado) | bruto de 16,3 s com dois silêncios → 3 cortes (9,5 s) → 3 `<video>` com `data-media-start`; áudio do MP4 renderizado transcrito **na ordem certa**; `check` 0 erros; −14,0 LUFS |
+| Stories | 3 MP4 de 8 s (1080×1920) + master de 24 s; `data-hold` nas telas estáticas |
+| `media-use` | SFX do pacote local resolvido em `.media/` e renderizado com áudio |
+| Preview | Studio em `:3002`, HTTP 200, `preview --context --json` respondendo |
+| Portabilidade do `setup.sh` | caminho `sha256sum` e caminho `shasum -a 256` (macOS) testados, inclusive o aviso de drift |
+| CI | `.github/workflows/verify.yml` roda sintaxe + lint das receitas a cada push e PR (`tests/run.sh`) |
+
+**Não coberto:** Windows e macOS reais (só Linux + o caminho `shasum` simulado); música/imagem do
+catálogo HeyGen (exigem login na conta do usuário; SFX local é offline).
+
 ## Licença
 
 MIT — use, modifique e distribua livremente. Veja `LICENSE`.

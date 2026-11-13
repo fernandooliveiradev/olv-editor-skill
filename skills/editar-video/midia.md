@@ -28,6 +28,14 @@ composição"), e antes de qualquer mixagem.
 clip no render e avisa `clip_media_fit`; o silêncio que você queria fica fora do áudio, na cena. Use a
 duração real do arquivo (`ffprobe -show_entries format=duration`) no clip de áudio e deixe a cena mais longa.
 
+**Mídia entra dentro do root da composição.** Em `compositions/*.html`, um `<audio>`/`<video>` colocado
+antes do `<div id="...">` raiz vira o "root" do template e o lint falha com `root_missing_composition_id`
+(verificado). Coloque a mídia **dentro** do root, como qualquer outro filho.
+
+**`data-start` de mídia aninhada é local à composição** — o aviso
+`nested_media_start_basis_ambiguous` só lembra disso. Dentro de uma cena, o tempo conta de 0 na cena; na
+raiz, conta do filme.
+
 **O lint não perdoa:** um `<video>` cronometrado sem `data-has-audio` nem `muted` falha
 (`video_missing_muted`); um `<audio>` sem `id` falha (`media_missing_id`); um `<video>`
 cronometrado dentro de outro elemento cronometrado falha (`video_nested_in_timed_element`) — o
@@ -88,6 +96,10 @@ Mídia remota nunca é baixada no render: **todo `src` é um arquivo local** den
 
 ## 4. Voz, música e efeitos
 
+- **De onde vem:** `media-use` resolve SFX do pacote local (21 sons, sem login) e música/imagem/voz pelo
+  catálogo HeyGen (login grátis) ou pelo arquivo do cliente. O arquivo cai em `.media/` com um
+  `manifest.jsonl`; referencie esse caminho local (`.media/audio/sfx/sfx_001.mp3`) ou mova para `assets/` —
+  o contrato é só um: `src` local, nunca remoto.
 - **Voz é a protagonista.** Música entra em `data-volume` baixo (≈ 0,12–0,22) e com fades; não
   compita com a fala. Para abaixar a música sob a voz, `sidechaincompress` (FFmpeg) na mixagem
   final ou automação de volume por trecho.

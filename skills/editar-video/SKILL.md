@@ -194,8 +194,9 @@ etapa. Só aqui o projeto nasce e os arquivos entram. Ordem interna: projeto →
    aprovação**. Aplicados os cortes, mantenha áudio e vídeo sincronizados, deixe pausas naturais e gere
    `limpo.mp4`.
 7. **Música, SFX, imagens e logo:** carregue `media-use` (`media-use resolve --type <bgm|sfx|image|logo>
-   --intent "..." --project .`) e traga tudo para `assets/` — render nunca busca mídia remota. Música sem
-   licença não entra; créditos em `CREDITOS.md`.
+   --intent "..." --project .`) e traga tudo para o projeto — o arquivo cai em `.media/` com manifesto
+   (SFX sai do pacote local, sem login; música/imagem exigem login grátis no HeyGen ou asset do cliente).
+   Render nunca busca mídia remota. Música sem licença não entra; créditos em `CREDITOS.md`.
 8. **Stories:** cada tela é uma composição própria (Etapa 7 renderiza uma por uma); enquete/quiz/botão
    são nativos do app e não entram queimados (regras em `templates-gravacao.md` §2).
 
