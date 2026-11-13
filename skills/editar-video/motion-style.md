@@ -8,7 +8,7 @@ Consulte este arquivo antes de criar qualquer animação. O objetivo é um visua
 2. **Movimento com propósito.** Toda animação guia o olhar, enfatiza uma ideia ou marca uma transição — o motivo de tela (uma linha de batimento, um contador, um card) dá o contexto.
 3. **Entradas com presença, saídas mais curtas.** A entrada tem mais presença que a saída (saída com 40–50% da duração da entrada).
 4. **Consistência.** Mesmo easing, mesmas durações e mesma "personalidade" de movimento em todo o vídeo, usando as receitas da §7.
-5. **Respiro.** Deixe o conteúdo parado tempo suficiente para ser lido: pelo menos ~0,3 s por palavra de texto de tela; títulos curtos ficam no mínimo 1 s em cena e a última linha do vídeo, no mínimo 2 s.
+5. **Respiro.** Deixe o conteúdo parado tempo suficiente para ser lido: **0,5 s + 0,3 s por palavra** de texto de tela (o mesmo cálculo da §8.7 e do `check`); títulos curtos ficam no mínimo 1 s em cena e a última linha do vídeo, no mínimo 2 s.
 6. **Menos é mais.** Uma ideia por cena, com 2 ou 3 elementos animando em cada momento.
 7. **A regra serve ao vídeo.** Este guia é padrão de partida, não corset: quando o desvio deixa o vídeo melhor (ritmo, efeito, composição), desvie com critério e registre a decisão no `plano.md`. A barra de qualidade — leitura, contraste, sincronia, propósito — não muda.
 
@@ -150,7 +150,7 @@ O dicionário com que o estúdio nomeia o que entra no vídeo — termos em port
 | **Rough Cut** | Ordem e ritmo ajustados, sem acabamento — revisão estrutural | versão revisável no preview (`preview --background`) |
 | **Fine Cut / Picture Lock** | Visual aprovado e travado antes do acabamento — pré-finalização | só depois da aprovação do cliente: acabamento + render |
 | **Stringout / Selects** | Agrupa as melhores tomadas/momentos — organizar material bruto | seleção por transcrição + `silencedetect` |
-| **Scene Detection** | Identifica mudanças de cena — separar planos automaticamente | `hyperframes measure` ou FFmpeg `select='gt(scene,0.4)'` |
+| **Scene Detection** | Identifica mudanças de cena — separar planos automaticamente | `npx hyperframes measure cuts <video>` (pega corte seco, jump cut e punch-in dentro de um mesmo take, que o `select='gt(scene,0.4)'` do FFmpeg perde) |
 | **Silence Removal** | Detecta e remove pausas silenciosas — acelerar vídeo falado | `silencedetect` + lista de cortes (com aprovação) |
 | **Filler Word Removal** | Remove hesitações e palavras de preenchimento — limpar fala | na mesma lista de cortes; nunca alterar o sentido |
 | **Speaker Diarization** | Identifica quem fala e em quais intervalos — entrevistas | `hyperframes transcribe --speakers` (engine heygen) |
@@ -210,7 +210,7 @@ O layout nasce sem sobreposição quando cada conteúdo tem sua zona:
 2. **Empilhe as zonas com flexbox em coluna** e folgas de 40–70 px entre elas. Elementos absolutos ficam só nos decorativos.
 3. **Medidas de tipografia:** herói entre 4 e 9% da altura do frame, apoio entre 2,5 e 4%, no máximo duas linhas por bloco; texto-chave dentro da caixa de 80% (864 px em 1080 de largura).
 4. **Ancore os decorativos na própria zona** — partículas centradas no selo, linha de motivo abaixo da frase, grid no fundo — e marque-os com `data-layout-ignore`.
-5. **Feche com snapshot no meio da cena:** cada zona mostra seu protagonista com respiro ao redor. O `npm run check` valida overflow, sobreposição, contraste e erros de runtime; respiro e composição você confere nos próprios snapshots.
+5. **Feche com snapshot no meio da cena:** cada zona mostra seu protagonista com respiro ao redor. O `npx hyperframes check` valida overflow, sobreposição, contraste e erros de runtime; respiro e composição você confere nos próprios snapshots.
 
 ## 7. Receitas de tela (use uma por cena, repetindo no vídeo inteiro)
 
@@ -235,8 +235,11 @@ Cada cena que repete a receita reforça a identidade do vídeo. **Duas ou três 
 6. **Movers rápidos** levam `data-motion-blur="on"` na raiz da composição (ou `="off"` num nó que já traz o próprio blur) — entrada de cards, objetos que voam através da câmera, chicotes.
 7. **Mudança de texto re-temporiza tudo:** cada copy novo recalcula a leitura (0,5 s + 0,3 s por palavra; última linha com no mínimo 2 s) e reposiciona entradas, saídas e pops nos cues do beatmap.
 8. **Assets decorativos nascem prontos:** arte com fundo de papel ou scan vira PNG transparente (cor ou luminância removida); licença de uso comercial livre e créditos registrados num `CREDITOS.md` junto dos arquivos. Texturas e fundos intencionais ficam como estão.
-9. Comandos do HyperFrames: `npm run check` depois de cada edição; snapshots nos três instantes de cada animação nova; render só depois da verificação.
+9. Comandos do HyperFrames: `npx hyperframes check` depois de cada edição (o `npm run check` do projeto scaffolded aponta para ele); `check --snapshots` na primeira passada inteira; snapshot triplo só em animação nova ou suspeita; render só depois da verificação.
 10. **Mecânica bespoke com caixa herdada** (troca de caractere por gráfico): um glifo-fantasma com `visibility: hidden` fixa a caixa natural do caractere (largura, altura e baseline vêm da métrica da fonte) — as letras vizinhas nunca se movem; caixa sem glifo usa um span com largura e altura fixas como fantasma. A máscara é `overflow: hidden` nessa caixa; a letra sai e o gráfico sobe dentro dela (ou gira em Y), por 8–12 quadros a 30 fps (≈0,27–0,4 s); o gráfico segura 0,6–1,2 s com um micro-gesto e devolve a letra. Verificação: comparar a posição das letras vizinhas em três snapshots (antes, meio, depois) — diferença de 0 px.
+11. **`.clip` guarda o tempo, não o movimento.** O elemento com `class="clip"` define `data-start`, `data-duration` e `data-track-index`; quem anima é o **filho** dele — ou, no máximo, a `opacity` do próprio clip. Animar `transform`, `filter` ou `visibility` no `.clip` falha o lint (`gsap_animates_clip_element`); para esconder use `tl.set`, nunca tween de `visibility`. E `data-start` de um clip é o tempo real do playhead, nunca um 0 silencioso.
+12. **Contrato de cena.** Cada cena é um `compositions/*.html` com tudo dentro de `<template>` (style + root + script; o que fica fora é descartado). O `id` do host, o `id` do root da cena e a chave de `window.__timelines[...]` são o **mesmo** nome — se divergirem, o render espera 45 s por cena e mostra frame estático. Use `fromTo`, nunca `from` (a cena é re-buscada a cada entrada e o `from` deriva). Nunca faça `add()` da timeline da cena na timeline raiz; só a raiz é pausada, e você nunca chama `play()`.
+13. **Fontes resolvíveis.** As empacotadas resolvem pelo nome: Inter, Montserrat, Outfit, Nunito, Oswald, League Gothic, Archivo Black, Space Mono, IBM Plex Mono, JetBrains Mono, EB Garamond, Playfair Display, Source Code Pro, Noto Sans JP, Roboto, Open Sans, Lato, Poppins. Qualquer outra família exige `@font-face` no arquivo que a usa, ou o lint falha (`font_family_without_font_face`).
 
 ## 9. Padrões de decisão
 
@@ -261,7 +264,7 @@ Cada cena que repete a receita reforça a identidade do vídeo. **Duas ou três 
 - [ ] Cada elemento nasce e termina dentro das margens seguras, um protagonista por zona, sem textos sobrepostos
 - [ ] Mecânicas bespoke conferidas: caixa do swap colada ao glifo e vizinhas na mesma posição (±0 px) antes/durante/depois
 - [ ] Texto legível em tela de celular, com tempo de leitura respeitado (inclusive textos revisados: recalcular sempre; última linha ≥ 2 s)
-- [ ] Contraste AA: ≥ 3:1 em texto grande e ≥ 4,5:1 em texto pequeno (o `npm run check` mede)
+- [ ] Contraste AA: ≥ 3:1 em texto grande e ≥ 4,5:1 em texto pequeno (o `npx hyperframes check` mede)
 - [ ] Entradas importantes nascem exatamente nos cues do beatmap/SFX (≤ 1 frame de folga)
 - [ ] Traços e máscaras desenham progressivamente nos snapshots
 - [ ] Decoração no vocabulário do logo e sem retângulo de fundo atrás de arte
@@ -270,4 +273,4 @@ Cada cena que repete a receita reforça a identidade do vídeo. **Duas ou três 
 - [ ] Duas ou três transições, suaves e repetidas nas mesmas viradas
 - [ ] Áudio com fade nas emendas e mix normalizado (≈ −14 LUFS, teto −1,5 dBTP) — conferido no MP4 final
 - [ ] Sistema de layout (eixo, margens, zonas) registrado no `plano.md` e seguido por todas as cenas; estado final de cada cena olhado no snapshot (`robustez.md`)
-- [ ] `npm run check` sem erros, avisos revisados um a um, e render concluído
+- [ ] `npx hyperframes check` sem erros, avisos revisados um a um, e render concluído

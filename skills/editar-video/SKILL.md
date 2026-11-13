@@ -5,9 +5,27 @@ description: Produz vídeos com Hyperframes (HTML + GSAP → MP4), FFmpeg, faste
 
 # Editar vídeo com Hyperframes + GSAP
 
-Fluxo completo para três modos de trabalho. Antes de começar, leia `motion-style.md`, `templates-gravacao.md` e `robustez.md` (na mesma pasta desta skill): o terceiro é só processo e verificação (sistema de layout em números, medir em vez de supor, ciclo de snapshot e relato honesto) e não impõe visual algum; o primeiro rege o dicionário de motion e edição, o ritmo, o layout em zonas, as receitas de tela e as regras técnicas de GSAP; o segundo rege a estrutura do roteiro, o gancho, a chamada e a checklist de entrega de cada formato social — eles são o padrão do estúdio.
+Fluxo completo para três modos de trabalho. Antes de começar, leia `motion-style.md`, `templates-gravacao.md`, `robustez.md` e `midia.md` (na mesma pasta desta skill): o primeiro rege o dicionário de motion e edição, o ritmo, o layout em zonas, as receitas de tela e as regras técnicas de GSAP; o segundo rege a estrutura do roteiro, o gancho, a chamada e a checklist de entrega de cada formato social; o terceiro é só processo e verificação (sistema de layout em números, medir em vez de supor, ciclo de snapshot e relato honesto) e não impõe visual algum; o quarto traz as regras de mídia e áudio que quebram o render (`<video>`, `<audio>`, `.clip`, cortes, beatmap, mixagem) — eles são o padrão do estúdio.
 
 **Entrega única:** a primeira versão já sai completa, ousada e correta — estrutura, contraste, recortes, leitura, sincronia e identidade visual resolvidos — e o que fica para o usuário pedir é gosto (trocar uma foto, um texto, uma cor). As etapas laterais que o vídeo pedir (preparar um asset, remover fundo, recortar fotos, remixar o áudio, re-temporizar por copy novo) fazem parte do fluxo e são executadas direto; conteúdo (roteiro, cortes) continua com aprovação.
+
+## Skills do HyperFrames — qual carregar, em que etapa
+
+Esta skill orquestra; ela não substitui as skills do motor. **Carregue a skill certa na etapa certa** e
+nunca escreva um comando de memória: o nome de um flag muda entre versões e o vídeo quebra longe da causa.
+
+| Etapa | Skill | Para quê |
+|---|---|---|
+| Roteiro, cenas, verificação | `hyperframes` | contrato de composição, GSAP, layout, format, o que é erro de lint |
+| Projeto, sincronia, verificação, render | `hyperframes-cli` | `init`, `check`, `snapshot`, `preview`, `render`, `timeline`, leitura do JSON |
+| Cenas | `hyperframes-registry` | efeito/transição/card com nome: `catalog --query` + `add` |
+| Ativos (voz, música, imagem) | `media-use` | voz, música, SFX, imagens, logo, corte, grade, mixagem |
+| Briefing | `reverse-any-video` | cliente entregou um vídeo para **recriar** (recurso Pro) |
+| Briefing | `style-sampling` | cliente quer uma **nova edição no estilo** de uma série (recurso Pro) |
+
+Como carregar: no OpenCode, chame a ferramenta `skill` com o `id` acima; no Claude Code, `/hyperframes`
+(ou deixe casar pela descrição); no Cursor e afins, anexe o `SKILL.md` da skill correspondente. Carregue
+a skill **antes** de usar os comandos dela — não recite flags.
 
 ## Direção criativa — o anseio do estúdio
 
@@ -71,8 +89,8 @@ Se `~/.olv-studio/venv` não existir, rode o setup antes de produzir e avise o u
 **O que fica no projeto (e só isso):** `index.html`, `compositions/`, `assets/` (áudio e imagens do vídeo), `renders/`, `plano.md`. Nunca crie `venv/`, `node_modules/`, modelos ou caches dentro do projeto — as ferramentas e modelos vivem em `~/.olv-studio`, e o HyperFrames guarda os seus em `~/.cache` e `~/.npm`, também fora da pasta do vídeo.
 
 - Verifique Node.js >= 22 e FFmpeg. Se faltar algo, explique como instalar (o setup só avisa, não instala pacote de sistema).
-- As skills do HyperFrames são instaladas e atualizadas pela pessoa, não pelo agente: use as que estiverem instaladas e, se faltarem ou estiverem velhas, aponte o comando (`npx hyperframes skills update <nome>`) e aguarde. Para os padrões de composição, leia as skills instaladas (`/hyperframes`, `/hyperframes-cli`). Regras principais: timelines GSAP registradas pausadas, animação determinística, tudo como função do tempo da timeline.
-- Crie o projeto com `npx hyperframes init projeto-video` e rode `npx hyperframes doctor`.
+- As skills do HyperFrames são instaladas e atualizadas pela pessoa, não pelo agente: use as que estiverem instaladas e, se faltarem ou estiverem velhas, aponte o comando (`npx hyperframes skills update <nome>`) e aguarde. Para os padrões de composição, leia as skills instaladas (`hyperframes`, `hyperframes-cli`) — veja o mapa de skills no começo deste arquivo.
+- Crie o projeto com `npx hyperframes init projeto-video --resolution portrait` (o padrão é **1920×1080**; social é 1080×1920) e rode `npx hyperframes doctor`.
 - Trabalhe em cópias dos arquivos, preservando os originais.
 
 ## Fluxo dos modos A e C (vídeo gravado)
@@ -89,21 +107,25 @@ Se `~/.olv-studio/venv` não existir, rode o setup antes de produzir e avise o u
 
 ## Construção da composição
 
-Use as skills instaladas do HyperFrames (`/hyperframes`, `/hyperframes-cli`); as regras de GSAP vivem em `motion-style.md` §8. Cada elemento da composição é HTML com atributos de tempo (`data-start`, `data-duration`, `data-track-index`) e a classe `clip` nos elementos cronometrados.
+Carregue `hyperframes` (contrato e GSAP) e `hyperframes-cli` (comandos) antes desta etapa; as regras
+de GSAP vivem em `motion-style.md` §8 e as de mídia em `midia.md`. Cada cena é HTML com atributos de
+tempo (`data-start`, `data-duration`, `data-track-index`): o **elemento cronometrado** leva a classe
+`clip` e guarda o tempo; **quem anima é o filho** dele (ou, no máximo, a `opacity` do clip) — animar
+`transform` no `.clip` falha o lint (`gsap_animates_clip_element`).
 
-1. **Trave a sincronia antes do código.** Abra o beatmap/eventos e mapeie cue → elemento em um quadro (ex.: `frase_2 → entrada da frase 2`, `selo → pop do selo`), no mesmo segundo. Sem beatmap, gere a grade com `npx hyperframes beats` — ele retorna `bpm` (estimado; confira contra a faixa) e `beatTimes`, mas **não** retorna downbeats: derive a fase do compasso você mesmo (ex.: energia da banda grave por batida) e alinhe as fronteiras de cena a múltiplos inteiros de compasso. Cada entrada nasce no cue do SFX correspondente.
-2. **Comece pelo catálogo quando ele não descaracteriza.** Antes de escrever à mão um efeito, transição, card, gráfico ou estilo de legenda com nome, procure no catálogo em **inglês** (`npx hyperframes catalog --query "bar chart count up"` — o catálogo é indexado em inglês; busca em português volta vazia) e use o bloco pronto quando ele servir ao guia de estilo, instalando com `npx hyperframes add <nome>`. Leia `/hyperframes-registry` para os níveis de busca e a instalação. Se o brief pedir originalidade ou uma mecânica própria, monte do zero e relate a decisão no fechamento.
+1. **Trave a sincronia antes do código.** Abra o beatmap/eventos e mapeie cue → elemento em um quadro (ex.: `frase_2 → entrada da frase 2`, `selo → pop do selo`), no mesmo segundo. Sem beatmap, gere a grade com `npx hyperframes beats` — ele exige uma trilha local marcada `data-timeline-role="music"` (regras em `midia.md` §5), retorna `bpm` (estimado; confira contra a faixa) e `beatTimes`, mas **não** retorna downbeats: derive a fase do compasso você mesmo (ex.: energia da banda grave por batida) e alinhe as fronteiras de cena a múltiplos inteiros de compasso. Cada entrada nasce no cue do SFX correspondente.
+2. **Comece pelo catálogo quando ele não descaracteriza.** Antes de escrever à mão um efeito, transição, card, gráfico ou estilo de legenda com nome, procure no catálogo em **inglês** (`npx hyperframes catalog --query "bar chart count up"` — o catálogo é indexado em inglês; busca em português volta vazia) e use o bloco pronto quando ele servir ao guia de estilo, instalando com `npx hyperframes add <nome>`. Carregue `hyperframes-registry` para os níveis de busca e a instalação. Se o brief pedir originalidade ou uma mecânica própria, monte do zero e relate a decisão no fechamento.
 3. **Layout em zonas** (motion-style §6): herói, apoio, dados e selo empilhados em flexbox, um protagonista por zona, decorativos ancorados e marcados com `data-layout-ignore`.
 4. **Receita de tela** (motion-style §7): cada cena usa a receita do seu tipo (pergunta, número, lista, produto/fotos, editorial/tipografia, CTA) — mesma tipografia, mesmo easing e mesma personalidade das demais cenas.
-5. **Precisão GSAP** (fonte única: motion-style §8.1–§8.4): primeiro tween de cada elemento em `fromTo` padrão; tweens seguintes da mesma propriedade com `immediateRender: false`; `autoRound: false` em todo `strokeDashoffset`; timelines pausadas registradas depois dos tweens; partículas por PRNG com semente fixa.
+5. **Precisão GSAP** (fonte única: motion-style §8.1–§8.4 e §8.11–§8.12): primeiro tween de cada elemento em `fromTo` padrão; tweens seguintes da mesma propriedade com `immediateRender: false`; `autoRound: false` em todo `strokeDashoffset`; timelines pausadas registradas depois dos tweens; partículas por PRNG com semente fixa; nunca animar `transform` de um elemento `.clip` (anime o filho); cena = `<template>` com host, root e timeline de mesmo `id`, e `fromTo` (nunca `from`).
 6. **Identidade, mídia e ousadia** (motion-style §7 e §9):
    - decoração vetorial no vocabulário do logo (mesmo traço, espessura, abstração e paleta); asset externo entra quando parece da própria marca, sempre com licença comercial livre, fundo removido e créditos registrados num `CREDITOS.md`;
    - fotos recortadas (`object-position`) para o assunto do texto; logo em disco neutro sobre fundos coloridos; `data-motion-blur` nos movers rápidos;
    - social nasce ousado: objetos que batem e voam, transições com causa (um objeto em tela vira o mundo), springs com overshoot visível — receita "Produto / fotos".
-7. **Modos:**
-   - **Modo A:** `limpo.mp4` como base. Por cima: legendas animadas palavra por palavra (sincronizadas com a transcrição ajustada aos cortes), título de abertura, lower third com nome e função, ênfases em pontos-chave e transições suaves.
+7. **Modos** (regras de mídia em `midia.md` — leia antes; `data-has-audio`/`muted`, `id` em todo `<audio>` e `data-media-start` são o que mais quebra):
+   - **Modo A:** `limpo.mp4` como base, **um `<video class="clip">` por corte** (com `data-media-start`), `playsinline` e `data-has-audio="true"` quando o arquivo tem som. Por cima: legendas animadas palavra por palavra (sincronizadas com a transcrição ajustada aos cortes), título de abertura, lower third com nome e função, ênfases em pontos-chave e transições suaves.
    - **Modo B:** cada cena do storyboard vira um bloco da composição, com timing sincronizado à narração ou ao ritmo da música.
-   - **Modo C:** os trechos de `limpo.mp4` entram como clips na trilha principal. As cenas de motion em tela cheia entram nos pontos marcados no `plano.md`, com transição entre o vídeo e o motion (e de volta). Mantenha a voz contínua por baixo quando fizer sentido e a mesma identidade visual em tudo.
+   - **Modo C:** os trechos de `limpo.mp4` entram como clips na trilha principal, com as mesmas regras do modo A. As cenas de motion em tela cheia entram nos pontos marcados no `plano.md`, com transição entre o vídeo e o motion (e de volta). Mantenha a voz contínua por baixo quando fizer sentido e a mesma identidade visual em tudo.
 8. **Uma ideia por cena**, com 2 ou 3 elementos animando em cada momento.
 
 ## Verificação e entrega
@@ -123,12 +145,12 @@ Use as skills instaladas do HyperFrames (`/hyperframes`, `/hyperframes-cli`); as
 - Stories: 5–7 telas de 7–15 s, ao menos uma interação por sequência e instrução clara na última.
 - Shorts: fechamento em loop, título/descrição com o termo de busca e uma ou duas hashtags relevantes + #Shorts.
 
-1. Rode `npm run check` (lint + runtime + layout + motion + contraste) e leve a zero os erros; revise cada aviso um a um.
-2. **Snapshot nos três instantes de cada animação nova** — 0,2 s antes do cue, meio da tween e logo após o fim — e leia os frames. Confirme: cada elemento nasce exatamente no cue, as zonas estão limpas e os traços desenham progressivamente. Corrija e repita até fechar.
-3. Rode a checklist de qualidade do `motion-style.md` e relate o que verificou.
+1. Rode `npx hyperframes check --snapshots` (lint + runtime + layout + motion + contraste + craft, com frames gerais e um crop por achado) e leve a zero os erros; revise cada aviso um a um. O `npm run check` do projeto criado com `init` aponta para esse comando.
+2. **Olhe o filme inteiro de uma vez:** `npx hyperframes snapshot --review` gera a folha de batidas, as tiras de emenda (0,2 s em volta de cada corte) e a folha em tamanho de celular — leia as imagens. Reserve o snapshot triplo (`snapshot --at 0,2 s antes / meio / depois`) para animações **novas ou suspeitas**: três instantes por animação em 20 cenas são 60 imagens e não escala.
+3. Rode a checklist de qualidade do `motion-style.md` §10 e relate o que verificou, incluindo: legibilidade na folha de celular (`review-phone.jpg`, 360 px), colisão com a faixa da legenda (`check --caption-zone "x0=0;y0=.78;x1=1;y1=1;severity=error"`) e, onde houver intenção de movimento declarada, o sidecar `*.motion.json` (`appearsBy`, `before`, `staysInFrame`, `keepsMoving`) — é o que transforma "nasceu no cue" em verificação automática.
 4. **Mixagem:** normalização em duas passadas com FFmpeg: primeira mede (`loudnorm=...:print_format=summary`), segunda aplica com os valores medidos (alvo ≈ −14 LUFS, teto −1,5 dBTP, `LRA=9`). Confira o resultado com `ffprobe`/`loudnorm` antes de entregar.
 5. **Preview antes da entrega:** abra o preview (`npx hyperframes preview --background`) e diga que o projeto fica editável ali (ou no app desktop).
-6. Renderize com `npx hyperframes render` e confira o MP4 com `ffprobe` (vídeo + trilha de áudio presentes, quando houver áudio). Informe onde o MP4 ficou.
+6. Renderize com `npx hyperframes render --quality delivery` (use `--quality draft` enquanto ainda estiver iterando; `looks` é o primeiro encode bom) e confira o MP4 com `ffprobe` (vídeo + trilha de áudio presentes, quando houver áudio, e duração igual ao `data-duration` da raiz). Informe onde o MP4 ficou.
 7. Liste os arquivos gerados e explique como pedir ajustes (ex.: "título maior", "trocar a cor", "tirar tal corte", "refazer a cena 3").
 8. **Feche com o pós-publicação do formato** (`templates-gravacao.md`): comentário fixado com informação complementar, resposta a todos os comentários na primeira hora e compartilhamento nos Stories no mesmo dia; no Shorts, título/descrição com o termo de busca, #Shorts e comentário fixado com o link do vídeo longo; no Stories, Destaques (Quem sou, Como funciona, Resultados, Dúvidas).
 

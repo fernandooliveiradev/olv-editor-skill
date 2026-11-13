@@ -6,8 +6,16 @@ Saída: lista [{id, text, start, end}] em `--out` (padrão: assets/audio/transcr
 import argparse
 import json
 import pathlib
+import re
 import sys
 import time
+
+# Tokens que o Whisper inventa sobre música/silêncio. Nunca viram legenda.
+MUSIC_TOKEN = re.compile(r"^[♪♫♬♩�\s\u266a-\u266f\-–—.]+$")
+
+
+def is_music_token(text: str) -> bool:
+    return bool(MUSIC_TOKEN.match(text))
 
 
 def main() -> int:
@@ -20,6 +28,7 @@ def main() -> int:
     ap.add_argument("--compute-type", default="int8", help="int8, float16, float32")
     ap.add_argument("--text-out", default=None, help="também grava o texto corrido neste .txt")
     ap.add_argument("--prompt", default=None, help="dica de vocabulário para o ASR (ex.: nomes próprios, termos do nicho)")
+    ap.add_argument("--keep-noise", action="store_true", help="mantém tokens não-palavra (♪, �) em vez de filtrar")
     args = ap.parse_args()
 
     from faster_whisper import WhisperModel
@@ -35,11 +44,15 @@ def main() -> int:
         initial_prompt=args.prompt,
     )
 
-    words = []
+    raw, words = 0, []
     for seg in segments:
         for w in seg.words or []:
+            raw += 1
             text = w.word.strip()
             if not text:
+                continue
+            noise = is_music_token(text)
+            if noise and not args.keep_noise:
                 continue
             words.append(
                 {
@@ -54,6 +67,25 @@ def main() -> int:
         print("Nenhuma palavra transcrita — confira o áudio e o idioma.", file=sys.stderr)
         return 1
 
+    # Gate de qualidade (o mesmo do media-use): transcrição ruim gera legenda sem sentido.
+    dropped = raw - len(words)
+    ratio = dropped / raw if raw else 0
+    short = [w for w in words if w["end"] - w["start"] < 0.05]
+    if ratio > 0.20:
+        print(
+            f"AVISO: {dropped}/{raw} tokens ({ratio:.0%}) eram música/ruído — a transcrição provavelmente "
+            "falhou. Repita com modelo maior (medium) ou entregue o texto de referência antes de gerar legenda.",
+            file=sys.stderr,
+        )
+    elif dropped:
+        print(f"{dropped} token(s) de música/ruído removido(s).", file=sys.stderr)
+    if len(short) > max(3, len(words) * 0.05):
+        print(
+            f"AVISO: {len(short)} palavra(s) com menos de 0,05 s — timestamps instáveis; "
+            "confira a legenda contra o áudio.",
+            file=sys.stderr,
+        )
+
     out = pathlib.Path(args.out or "assets/audio/transcript.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(words, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -63,8 +95,10 @@ def main() -> int:
         txt.parent.mkdir(parents=True, exist_ok=True)
         txt.write_text(" ".join(w["text"] for w in words) + "\n", encoding="utf-8")
 
-    dur = words[-1]["end"]
-    print(f"idoma {info.language} · áudio {info.duration:.1f}s · {len(words)} palavras · modelo {args.model} · {time.time() - t0:.1f}s")
+    print(
+        f"idioma {info.language} · áudio {info.duration:.1f}s · {len(words)} palavras · "
+        f"modelo {args.model} · {time.time() - t0:.1f}s"
+    )
     print(f"salvo em {out}")
     return 0
 

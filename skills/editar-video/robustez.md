@@ -39,7 +39,7 @@ Antes de entregar, confirme com número ou imagem — nunca por suposição:
 2. Snapshot (`npx hyperframes snapshot --at ...`), incluindo o estado final de cada cena; use a folha de contato para ver o filme inteiro de uma vez.
 3. **Olhar** as imagens e escrever, em uma lista, cada defeito visto (ou "nenhum defeito encontrado em X, Y, Z").
 4. Corrigir pela causa (seção 2), não cena por cena.
-5. Repetir até a lista sair vazia, depois `npm run check`.
+5. Repetir até a lista sair vazia, depois `npx hyperframes check`.
 
 Não declare uma cena pronta sem ter olhado o frame dela. Vários defeitos só aparecem na imagem; o `check` valida regras, não composição.
 
