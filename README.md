@@ -44,6 +44,10 @@ bash skills/editar-video/setup.sh
 O último comando testa de verdade: grava uma frase com a voz de IA e transcreve de volta. Se passar,
 está tudo pronto.
 
+Atualizou a skill depois? Os comandos já usam o código novo na hora. Se o diagnóstico reclamar da cópia
+antiga, `olv-doctor --fix` conserta em um segundo — e a pasta instalada do agente (`~/.config/opencode/skills/`)
+precisa ser recopiada para ele ler as instruções novas.
+
 ## Pedir um vídeo
 
 > "Faz um Reels de 30 segundos sobre IA organizando as perguntas do dia a dia do negócio.

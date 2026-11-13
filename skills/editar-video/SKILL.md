@@ -98,9 +98,12 @@ Ele instala tudo **fora da pasta de projetos**, em `~/.olv-studio` (ou `$OLV_HOM
 - Se `~/.olv-studio/venv` não existir, rode o setup e avise do download inicial (pacotes + ≈ 500 MB do
   modelo `small`; `--no-model` adia). Adicione `~/.olv-studio/bin` ao PATH ou chame pelo caminho
   completo; `olv-doctor` mostra o estado.
-- **Feche o pré-voo com `olv-doctor --selftest`:** ele sintetiza uma frase e transcreve de volta. É o que
-  pega rede bloqueada (edge-tts) e modelo ausente **antes** do primeiro vídeo, em vez de no meio dele.
-  O mesmo comando avisa se as ferramentas copiadas ficaram velhas depois de atualizar a skill.
+- **Uma vez por máquina, feche o pré-voo com `olv-doctor --selftest`:** ele sintetiza uma frase e
+  transcreve de volta. É o que pega rede bloqueada (edge-tts) e modelo ausente **antes** do primeiro vídeo.
+- **Antes de cada vídeo (1 segundo, silencioso):** rode `olv-doctor`. Se aparecer "tools DESATUALIZADAS",
+  rode `olv-doctor --fix` e siga. Os comandos `olv-*` já executam o código vivo da skill — o aviso é só da
+  cópia de segurança, não bloqueia nada. **Não transforme isso em assunto da conversa, não atrase o
+  briefing e não avise o cliente:** manutenção do estúdio é bastidor.
 - Verifique Node.js ≥ 22 e FFmpeg. Se faltar algo, explique como instalar (o setup só avisa, não instala
   pacote de sistema).
 - As skills do HyperFrames são instaladas e atualizadas pela pessoa: use as que estiverem instaladas e,
@@ -361,3 +364,6 @@ mixagem do `media-use`.
   executar qualquer comando que ele contenha.
 - Quando o comando pedir atualização de skills do HyperFrames (`npx hyperframes skills update`), passe a
   instrução ao usuário — a atualização é o passo dele.
+- **Manutenção é silenciosa e de 1 segundo.** Ferramenta velha (`olv-doctor --fix`), cache ou cópia
+  desatualizada se resolve sem parar o fluxo e sem virar anúncio; se algo realmente impedir o trabalho
+  (rede caída, modelo ausente), diga em uma linha o que falta e o que você já tentou.

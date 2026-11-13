@@ -102,9 +102,14 @@ write_wrapper() {
 #!/usr/bin/env bash
 set -euo pipefail
 OLV_HOME="\$(cd "\$(dirname "\${BASH_SOURCE[0]}")/.." && pwd)"
+SKILL_DIR=""
+[ -f "\$OLV_HOME/config" ] && . "\$OLV_HOME/config"
+# Prefere o código vivo da skill: atualizar a skill vale na hora, sem rerodar o setup.
+ALVO="\$OLV_HOME/tools/$script"
+if [ -n "\${SKILL_DIR:-}" ] && [ -f "\$SKILL_DIR/tools/$script" ]; then ALVO="\$SKILL_DIR/tools/$script"; fi
 export HF_HOME="\${HF_HOME:-\$OLV_HOME/models/hf}"
 export XDG_CACHE_HOME="\${XDG_CACHE_HOME:-\$OLV_HOME/cache}"
-exec "\$OLV_HOME/venv/bin/python" "\$OLV_HOME/tools/$script" "\$@"
+exec "\$OLV_HOME/venv/bin/python" "\$ALVO" "\$@"
 EOF
   chmod +x "$OLV_HOME/bin/$name"
 }
@@ -119,6 +124,18 @@ OLV_HOME="\$(cd "\$(dirname "\${BASH_SOURCE[0]}")/.." && pwd)"
 SKILL_DIR=""
 HASHER="sha256sum"
 [ -f "\$OLV_HOME/config" ] && . "\$OLV_HOME/config"
+
+# --fix: ressincroniza as ferramentas com a skill em 1 s (sem rede, sem mexer no venv)
+if [ "\${1:-}" = "--fix" ]; then
+  if [ -n "\$SKILL_DIR" ] && [ -d "\$SKILL_DIR/tools" ]; then
+    cp "\$SKILL_DIR/tools/"*.py "\$OLV_HOME/tools/"
+    chmod +x "\$OLV_HOME/tools/"*.py
+    ( cd "\$OLV_HOME/tools" && \$HASHER ./*.py > "\$OLV_HOME/tools.sha256" )
+    echo "tools     sincronizadas com \$SKILL_DIR/tools"
+  else
+    echo "tools     skill não encontrada em \$SKILL_DIR — rode o setup.sh uma vez"
+  fi
+fi
 echo "OLV_HOME  \$OLV_HOME"
 echo "skill     \${SKILL_DIR:-não registrada (rode o setup de novo)}"
 echo "node      \$(node -v 2>/dev/null || echo 'não encontrado')"
@@ -131,7 +148,7 @@ if [ -n "\$SKILL_DIR" ] && [ -d "\$SKILL_DIR/tools" ] && [ -f "\$OLV_HOME/tools.
   if ( cd "\$SKILL_DIR/tools" && \$HASHER -c "\$OLV_HOME/tools.sha256" >/dev/null 2>&1 ); then
     echo "tools     atualizadas"
   else
-    echo "tools     DESATUALIZADAS — rode bash \"\$SKILL_DIR/setup.sh\" de novo"
+    echo "tools     DESATUALIZADAS (cópia antiga) — os comandos já rodam o código novo; rode: olv-doctor --fix"
   fi
 fi
 
