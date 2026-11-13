@@ -306,13 +306,14 @@ sincronia nos cues. Frame 0 mostra o gancho (arte, produto ou linha), nunca uma 
    pode acusar `first_frame_empty` mesmo com a cena visível no snapshot — nesse caso ponha o gancho (ou
    um elemento visível) no próprio `index.html` no instante 0, ou registre o aviso como conhecido no
    relato. Não ignore: o frame 0 é a capa no feed.
-5. **Repita até a lista sair vazia.** Depois disso, `preview` (`npx hyperframes preview --background`).
+5. **Repita até a lista sair vazia.** O preview e o render são a etapa seguinte, não esta.
 
 Gate: `check` sem erro, folha olhada, defeitos listados (ou ausência declarada). **Sem render ainda.**
 
 ## Etapa 7 — Mixagem e render
 
-Carregue `hyperframes-cli` (render, preview) e, se a mixagem pedir tratamento de faixa, `media-use` §mixing.
+Carregue `hyperframes-cli` (render, preview) e, se a mixagem pedir tratamento de faixa, a referência de
+mixagem do `media-use`.
 
 1. **Mixagem:** normalização em duas passadas com FFmpeg: a primeira mede (`loudnorm=...:print_format=summary`),
    a segunda aplica com os valores medidos (alvo ≈ −14 LUFS, teto −1,5 dBTP, `LRA=9`). Confira com
