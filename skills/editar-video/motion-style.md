@@ -39,6 +39,7 @@ O dicionário com que o estúdio nomeia o que entra no vídeo — termos em port
 | Follow-through | Acomodação depois de parar | tween curto final com `back` ou `elastic` leve |
 | Overlap | Animações que começam antes da anterior terminar | posições relativas na timeline (`"-=0.2"`) |
 | Câmera falsa | Zoom/pan lento sobre um bloco | `scale` 1 → 1.05 durante a cena toda |
+| Keyframe + interpolação | dois estados marcados (início e fim) e o computador calcula o meio — a base de toda animação | `fromTo` + `ease`: o easing **é** a interpolação; mudar o easing muda a vida do movimento |
 | Transições | Wipe, zoom-through, flash branco, whip, shader | blocos do catálogo (`npx hyperframes add ...`) |
 
 ### 2.2 Cortes e tempo (edição)
@@ -112,6 +113,7 @@ O dicionário com que o estúdio nomeia o que entra no vídeo — termos em port
 | **Alpha Channel** | Transparência por pixel — sobreposições, exportar com transparência | WebM transparente: `hyperframes render --format webm` |
 | **Blending Modes** | Camadas se combinam por regras de cor/luz — texturas, brilhos, sobreposições | `mix-blend-mode: screen/overlay/multiply` |
 | **Masking** | Revela/oculta regiões por forma ou trajetória — revelação de texto, recortes | = "Mask reveal" em 2.1: animar `clip-path` |
+| **Rotoscopia / cutout** | Recorta o sujeito do fundo, sem chroma key — texto atrás da pessoa, troca de cenário | `npx hyperframes remove-background` gera o recorte (PNG/WebM); a pessoa fica numa camada acima do texto, com `data-layout-allow-occlusion` |
 
 ### 2.7 Tipografia e grafismos
 
@@ -155,6 +157,8 @@ O dicionário com que o estúdio nomeia o que entra no vídeo — termos em port
 | **Filler Word Removal** | Remove hesitações e palavras de preenchimento — limpar fala | na mesma lista de cortes; nunca alterar o sentido |
 | **Speaker Diarization** | Identifica quem fala e em quais intervalos — entrevistas | `hyperframes transcribe --speakers` (engine heygen) |
 | **Text-Based Editing** | Editar fala e vídeo pela transcrição — podcasts, entrevistas | modo A: a transcrição dirige os cortes |
+| **EDL** (lista de decisão de edição) | A lista numerada de cortes que o editor executa — início, fim e motivo de cada um | `plano.md` §6, aprovado antes de cortar; o agente aplica a lista, não improvisa corte |
+| **OCR (leitura de tela)** | Lê o texto de um print ou gravação de tela para destacar a palavra certa | print entra como objeto na cena; o destaque é posicionado pela caixa medida do texto |
 | **Agentic Editing** | O agente interpreta o briefing e executa a edição — tarefas claras + validação humana | esta skill: o agente produz, o cliente aprova conteúdo |
 
 **Como consultar o dicionário:** nomeie a técnica no `plano.md` pelo termo (pt/en/sinônimo) e escolha sempre efeito com função clara na edição — nenhum efeito decorativo sem propósito (princípio 2). Se uma técnica não tem caminho direto aqui, monte combinando as primitivas de 2.1.

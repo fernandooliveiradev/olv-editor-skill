@@ -98,6 +98,9 @@ Mídia remota nunca é baixada no render: **todo `src` é um arquivo local** den
 
 - **Trilha:** a biblioteca do estúdio (`musica.md`) — `olv-musica listar` escolhe por bpm/LRA e
   `olv-musica usar` copia para o projeto com o `<audio>` pronto e o crédito.
+- **B-roll de banco:** quando a fala pede uma imagem que não existe no material, busque pelo **assunto da
+  frase** (não pela palavra solta), baixe com licença livre (Pexels API, Openverse) e registre o crédito.
+  Ajuste a cor para a imagem conversar com o resto do filme.
 - **De onde vem (SFX e imagem):** `media-use` resolve SFX do pacote local (21 sons, sem login) e música/imagem/voz pelo
   catálogo HeyGen (login grátis) ou pelo arquivo do cliente. O arquivo cai em `.media/` com um
   `manifest.jsonl`; referencie esse caminho local (`.media/audio/sfx/sfx_001.mp3`) ou mova para `assets/` —
@@ -128,7 +131,36 @@ downbeats: derive a fase do compasso pela energia da banda grave e alinhe as vir
 múltiplos inteiros de compasso. Para analisar um arquivo avulso, `npx hyperframes beats
 music.mp3 --json` — nesse modo ele só imprime, não grava nada.
 
-## 6. Ordem: mídia antes de cena
+## 6. Vídeo gravado: rosto, recorte e print
+
+Três recursos separam uma edição de footage amador de uma profissional — e os três dependem de medir, não
+de chutar posição.
+
+**Rosto: o texto nunca passa na frente.** Meça a caixa do rosto por quadro e use-a para decidir onde o
+texto pode ficar:
+
+```bash
+npx hyperframes measure face <video> --json
+```
+
+Ele devolve `boxes` (x, y, w, h como fração do quadro) por amostra e `face_height`. Regra prática: herói e
+apoio ficam **acima ou abaixo** da caixa do rosto, nunca cruzando; lower third entra na altura do ombro,
+não do queixo. Se o rosto se move na cena, o texto se move com ele — ou sai do caminho.
+
+**Recorte sem chroma key.** `npx hyperframes remove-background` (skill `media-use`) tira a pessoa do fundo.
+Com o recorte por cima, o texto pode passar **atrás** dela — é o efeito que dá profundidade a um vídeo
+falado. O `check` trata o recorte como opaco: marque o elemento com `data-layout-allow-occlusion` e julge
+no snapshot, não no relatório.
+
+**Print como objeto.** Print de tela, página ou slide entra na cena com perspectiva, sombra e um leve
+movimento de câmera — não como imagem colada. Para destacar uma palavra dentro do print, meça a caixa do
+texto no print e posicione o destaque nela; é o que faz o olho achar o ponto certo em um segundo.
+
+**Rastrear um objeto.** Para grudar etiqueta, preço ou legenda em algo que se move, meça a posição do
+ponto em quadros-chave e faça o tween entre eles (mesmo easing do movimento). Movimento estimado "a olho"
+deriva em dois segundos.
+
+## 7. Ordem: mídia antes de cena
 
 1. Todos os arquivos chegam em `assets/` (voz, música, SFX, imagens, vídeo) e abrem localmente.
 2. Só então as cenas são escritas com os `data-*` acima.

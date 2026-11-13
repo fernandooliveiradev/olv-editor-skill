@@ -72,6 +72,9 @@ O guia não define visual, define **nível**: moderno, bem feito, com cara de mo
 
 **Regra não é corset:** quando o desvio deixa o vídeo melhor, o caminho do vídeo vence — com critério, decisão registrada no `plano.md`, e a barra de aceitação (leitura, contraste, sincronia, propósito) sempre fechando.
 
+**A ideia e o gosto são do cliente.** O agente executa com padrão de estúdio, mas quem decide o que o vídeo
+diz e se ficou bom é quem pediu. Quando o pedido estiver vago, proponha — não decida sozinho o que é "bom".
+
 ---
 
 ## Etapa 0 — Pré-voo da máquina (uma vez, fora do projeto)
@@ -328,7 +331,10 @@ mixagem do `media-use`.
    cliente pedir o arquivo direto.
 4. **Conferência:** `ffprobe` no MP4 — vídeo e trilha de áudio presentes (quando houver áudio) e duração
    igual ao `data-duration` da raiz. Informe onde o MP4 ficou.
-5. **Stories:** um MP4 por tela (`render -c compositions/story-01.html -o renders/story-01.mp4`) e o master
+5. **Confira o áudio contra o roteiro:** `olv-confere renders/final.mp4 --roteiro roteiro.txt` transcreve o
+   MP4 e compara palavra por palavra com o texto aprovado (troca, falta, sobra e percentual). É o que pega
+   o TTS que comeu uma palavra e o corte que engoliu meia frase — leia a lista mesmo quando passar.
+6. **Stories:** um MP4 por tela (`render -c compositions/story-01.html -o renders/story-01.mp4`) e o master
    só para revisão. A nota de stickers acompanha a entrega.
 
 ## Etapa 8 — Entrega

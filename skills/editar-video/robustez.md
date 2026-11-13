@@ -66,6 +66,23 @@ Revise de uma vez, antes de renderizar, os pontos que quebram a saída de forma 
 
 Feche com o que foi **verificado e como** (check, snapshots olhados, medidas) e o que **não** foi verificado. Se algo ficou aproximado, diga. Um relato claro vale mais que um "tudo certo" sem prova, e é o que deixa o usuário pedir o ajuste certo.
 
+## 9. Confira o áudio final contra o roteiro
+
+O defeito mais difícil de ver é o áudio que saiu diferente do aprovado — a palavra que o TTS comeu, o
+corte que engoliu meia frase, o trecho que ficou mudo. Antes de entregar, transcreva o próprio MP4 e
+compare com o roteiro:
+
+```bash
+olv-confere renders/final.mp4 --roteiro assets/audio/roteiro.txt
+```
+
+Ele normaliza número e símbolo (`5` = "cinco", `R$ 4.200` = "quatro mil e duzentos", `30%` = "trinta por
+cento"), ignora pontuação e mostra troca, falta e sobra com percentual. O limite padrão é 5%; `--estrito`
+falha em qualquer diferença. **Divergência abaixo do limite não é aprovação automática:** leia a lista —
+pode ser o ASR ouvindo errado (aí está ok) ou o áudio errado de verdade (aí não está).
+
+É também a prova mais direta de sincronia e de integridade dos cortes: se um corte comeu meia frase, aparece.
+
 ## Revisão final (responda antes de mostrar a versão)
 
 1. O sistema de layout está escrito no `plano.md` e todas as cenas o seguem?
@@ -74,3 +91,4 @@ Feche com o que foi **verificado e como** (check, snapshots olhados, medidas) e 
 4. O conteúdo está equilibrado no eixo e livre da legenda e da interface da plataforma?
 5. Corrigi as causas comuns no sistema, e não só os sintomas?
 6. O relato diz o que foi e o que não foi verificado?
+7. Transcrevi o áudio final e comparei com o roteiro (`olv-confere`)?

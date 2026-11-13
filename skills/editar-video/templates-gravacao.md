@@ -145,6 +145,21 @@ Stories é **sequência de telas independentes**, não um filme:
 | Sinal principal | Conclusão e envios | Respostas e mensagens | Retenção e satisfação |
 | Chamada | Enviar, palavra-chave ou direct | Botão de mensagem | Seguir ou assistir ao completo |
 
+## Reaproveitar uma gravação longa
+
+Uma entrevista, aula ou live de 40 minutos rende de 5 a 10 vídeos curtos — e é o formato de produção mais
+barato que existe. O trabalho é o mesmo desta skill, em série:
+
+1. **Transcreva uma vez** (`olv-asr`) e marque na transcrição os trechos que se sustentam sozinhos: uma
+   ideia completa, com começo, virada e fim, de 20 a 45 s.
+2. **Escreva um EDL por vídeo** (início, fim, motivo) no `plano.md` — a lista é o corte aprovado.
+3. **Cada corte ganha gancho e chamada próprios.** O trecho original não tem gancho: escreva a primeira
+   frase para ele (texto na tela + 1 s de fala), senão o vídeo começa no meio do raciocínio.
+4. **Uma cor, uma trilha, uma legenda** para a série inteira — é o que faz o conjunto parecer um canal.
+5. **Entregue em lote:** um MP4 por corte, nomeados `01-<assunto>.mp4`, com capa e termo de busca.
+
+Sem inventar o que a gravação não disse: se o trecho precisa de um dado que não está na fala, ele não entra.
+
 ## Rotina semanal sugerida
 
 | Dia | Formato | Função |

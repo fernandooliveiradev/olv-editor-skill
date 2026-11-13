@@ -75,7 +75,7 @@ A skill é texto, não código: cada arquivo rege uma parte do trabalho.
 | `templates-gravacao.md` | estrutura de roteiro de Reels, Stories e Shorts |
 | `midia.md` | as regras de vídeo, áudio e legenda que quebram o render |
 | `musica.md` | a biblioteca de trilhas: medir, escolher, mixar |
-| `robustez.md` | como verificar a entrega com evidência (inclusive sem ver imagem) |
+| `robustez.md` | como verificar a entrega com evidência (inclusive sem ver imagem) e `olv-confere`, que transcreve o MP4 final e compara com o roteiro palavra por palavra |
 | `plano-template.md` | o documento que registra cada decisão do projeto |
 | `receitas/` | seis telas prontas para copiar (pergunta, número, lista, produto, editorial, CTA) |
 
