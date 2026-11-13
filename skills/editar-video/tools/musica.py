@@ -113,8 +113,11 @@ def cmd_sync(args) -> int:
         print(f"pasta não encontrada: {origem}", file=sys.stderr)
         return 2
     n = 0
+    originais = {f.stem for f in origem.rglob("*") if f.is_file() and f.suffix.lower() in MIDIA - AUDIO}
     for f in sorted(origem.rglob("*")):
         if f.is_file() and f.suffix.lower() in MIDIA:
+            if f.suffix.lower() in AUDIO and f.stem in originais:
+                continue  # áudio extraído de um vídeo: o original já cobre
             destino = lib() / f.name
             if not destino.exists() or destino.stat().st_size != f.stat().st_size:
                 shutil.copy2(f, destino)
@@ -128,8 +131,11 @@ def cmd_index(args) -> int:
     idx = {}
     if indice().exists() and not args.forcar:
         idx = json.loads(indice().read_text())
-    arquivos = [f for f in sorted(lib().iterdir())
-                if f.is_file() and f.suffix.lower() in MIDIA]
+    todos = [f for f in sorted(lib().iterdir())
+             if f.is_file() and f.suffix.lower() in MIDIA]
+    originais = {f.stem for f in todos if f.suffix.lower() in MIDIA - AUDIO}
+    arquivos = [f for f in todos
+                if not (f.suffix.lower() in AUDIO and f.stem in originais)]
     pendentes = []
     for f in arquivos:
         reg = idx.get(f.name)
