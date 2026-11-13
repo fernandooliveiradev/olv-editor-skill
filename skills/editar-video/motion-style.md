@@ -204,6 +204,13 @@ Sugestões de personalidade:
 - Agrupe em **2–3 palavras** (alta energia), **3–5** (conversacional) ou **4–6** (calmo); quebre no fim
   de frase ou numa pausa ≥ 150 ms. **Um grupo visível por vez**, abrindo no início da primeira palavra e
   fechando no fim da última, com kill duro no fim (`tl.to(grupo,{opacity:0},t−0,12)` + `tl.set(grupo,{opacity:0,visibility:"hidden"},t)`).
+- **Um grupo por vez exige duas coisas, e as duas falham na prática:**
+  1. cada grupo é **absoluto** (`position:absolute; left/right/bottom`), nunca item de um flex — grupo
+     invisível em flex continua ocupando espaço e empurra os visíveis para o lado;
+  2. ao abrir um grupo, **esconda todos os outros no mesmo instante**, antes de mostrar o novo
+     (`tl.set(".leg-grupo", {opacity:0, visibility:"hidden"}, t)`, depois `tl.set(grupo, …)`). Confiar só no
+     fim do grupo anterior deixa dois grupos sobrepostos quando os tempos se tocam — a folha de revisão
+     pega, mas só se você olhar.
 - Legenda que começa em 0 s parece pré-existente: comece 0,1–0,3 s depois do corte.
 - Container **full-width absoluto, centrado por `text-align`** — nunca `left: 50%; transform: translateX(-50%)`,
   que corta nas bordas. `overflow: visible` (senão o glow e a palavra em escala são cortados).

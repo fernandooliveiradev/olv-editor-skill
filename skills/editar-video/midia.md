@@ -24,6 +24,10 @@ composição"), e antes de qualquer mixagem.
 | `data-volume` | ganho (1 = 0 dB; até 3,98 = +12 dB) | áudio que não é voz em primeiro plano |
 | `data-fade-in` / `data-fade-out` | fade de borda em segundos | entrada/saída de música e ambiente |
 
+**`data-duration` de áudio nunca passa do arquivo.** Se o slot for maior que o MP3, o runtime encurta o
+clip no render e avisa `clip_media_fit`; o silêncio que você queria fica fora do áudio, na cena. Use a
+duração real do arquivo (`ffprobe -show_entries format=duration`) no clip de áudio e deixe a cena mais longa.
+
 **O lint não perdoa:** um `<video>` cronometrado sem `data-has-audio` nem `muted` falha
 (`video_missing_muted`); um `<audio>` sem `id` falha (`media_missing_id`); um `<video>`
 cronometrado dentro de outro elemento cronometrado falha (`video_nested_in_timed_element`) — o
