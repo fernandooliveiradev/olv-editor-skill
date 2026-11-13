@@ -1,0 +1,59 @@
+<template>
+  <!-- Receita: PRODUTO / FOTOS. Troque o prefixo "rp2-". Substitua os .rp2-foto por <img> reais. -->
+  <style>
+    #receita-produto { position: absolute; inset: 0; background: var(--ground, #0b0b12); overflow: hidden; }
+    #rp2-cena { position: absolute; inset: 0; }
+    #rp2-conteudo { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center;
+      gap: 52px; padding: 0 90px; font-family: var(--font-display, Inter, sans-serif); }
+    #rp2-fan { position: relative; height: 720px; }
+    .rp2-foto { position: absolute; left: 50%; top: 90px; width: 460px; height: 600px;
+      margin-left: -230px; border-radius: 26px; box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55); }
+    .rp2-foto:nth-child(1) { background: linear-gradient(160deg, #4b4b63, #23232f); }
+    .rp2-foto:nth-child(2) { background: linear-gradient(160deg, #634b4b, #2f2323); }
+    .rp2-foto:nth-child(3) { background: linear-gradient(160deg, #4b6357, #232f29); }
+    #rp2-hero { position: absolute; left: 50%; top: 20px; width: 520px; height: 660px; margin-left: -260px;
+      border-radius: 30px; background: linear-gradient(150deg, #ff5a3c, #7a1d10);
+      box-shadow: 0 50px 100px rgba(0, 0, 0, 0.6); }
+    #rp2-titulo { color: var(--ink, #f4f4f5); font-size: 92px; font-weight: 900; line-height: 1.0;
+      letter-spacing: -0.03em; max-width: 900px; }
+    #rp2-apoio { color: var(--muted, #a1a1aa); font-size: 46px; font-weight: 500; }
+  </style>
+
+  <div id="receita-produto" data-composition-id="receita-produto" data-width="1080" data-height="1920" data-motion-blur="on">
+    <div id="rp2-cena" class="clip" data-start="0" data-duration="5" data-track-index="1">
+      <div id="rp2-conteudo">
+        <div id="rp2-fan">
+          <div class="rp2-foto" id="rp2-f1"></div>
+          <div class="rp2-foto" id="rp2-f2"></div>
+          <div class="rp2-foto" id="rp2-f3"></div>
+          <div id="rp2-hero"></div>
+        </div>
+        <h2 id="rp2-titulo">Três texturas, um ritual</h2>
+        <p id="rp2-apoio">Novo kit · edição de inverno</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    // Cards abrem em leque; herói por último, com spring visível
+    tl.fromTo("#rp2-f1", { opacity: 0, y: 160, x: -60, rotation: -16, scale: 0.92 },
+      { opacity: 1, y: 0, x: -150, rotation: -12, scale: 1, duration: 0.55, ease: "back.out(1.7)" }, 0.2);
+    tl.fromTo("#rp2-f2", { opacity: 0, y: 180, x: 40, scale: 0.9 },
+      { opacity: 1, y: 40, x: 0, rotation: 0, scale: 1, duration: 0.55, ease: "back.out(1.7)" }, 0.32);
+    tl.fromTo("#rp2-f3", { opacity: 0, y: 160, x: 60, rotation: 16, scale: 0.92 },
+      { opacity: 1, y: 0, x: 150, rotation: 12, scale: 1, duration: 0.55, ease: "back.out(1.7)" }, 0.44);
+    // O herói já está no frame 0; o movimento é um assentamento com spring
+    tl.fromTo("#rp2-hero", { scale: 0.94, y: 26 },
+      { scale: 1, y: 0, duration: 0.6, ease: "back.out(1.6)" }, 0);
+
+    tl.fromTo("#rp2-titulo", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 0.5);
+    tl.fromTo("#rp2-apoio", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 0.75);
+
+    // Câmera falsa: respiração lenta até o fim
+    tl.fromTo("#rp2-fan", { scale: 1 }, { scale: 1.04, duration: 3.6, ease: "sine.inOut" }, 0.7);
+    tl.fromTo("#rp2-conteudo", { opacity: 1 }, { opacity: 0, duration: 0.24, ease: "power2.in" }, 4.76);
+    window.__timelines["receita-produto"] = tl;
+  </script>
+</template>

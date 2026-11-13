@@ -86,11 +86,25 @@ o gancho, a chamada e a checklist de entrega.
 - Responder às interações por mensagem de voz curta.
 - Salvar nos Destaques: Quem sou, Como funciona, Resultados, Dúvidas.
 
+### Entregável de Stories (não é um vídeo único)
+
+Stories é **sequência de telas independentes**, não um filme:
+
+1. Cada tela é uma composição própria (`compositions/story-01.html` … `story-06.html`), 7–15 s cada,
+   1080×1920. Monte um `index.html` master só para revisão, com as telas em sequência.
+2. Renderize **um MP4 por tela** (`npx hyperframes render -c compositions/story-01.html -o renders/story-01.mp4`)
+   — é assim que cada uma sobe no app — e mantenha o master para o preview.
+3. Enquete, quiz, caixa de perguntas e botão de link são **nativos do app e não podem ser queimados no
+   vídeo**. Deixe a área deles livre (topo e rodapé, §6 do `motion-style.md`), escreva no vídeo apenas a
+   pergunta ou o convite, e entregue uma nota dizendo **qual sticker entra em qual tela**.
+4. A última tela entrega a instrução da chamada em texto; o botão é colocado no app sobre a área livre.
+
 ---
 
 ## 3) SHORTS DO YOUTUBE
 
 **Objetivo:** distribuição no feed de Shorts e ponte para o canal.
+**Formato:** vertical 9:16, 1080×1920 (Short não é 16:9).
 **Duração:** 20 a 45 s (até 3 min para conteúdo explicativo).
 **Sinais que o algoritmo mede:** retenção, conclusão e satisfação do espectador.
 

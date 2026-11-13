@@ -196,11 +196,31 @@ Sugestões de personalidade:
 
 ## 5. Legendas animadas
 
-- Máximo de 2 linhas, 3 a 6 palavras por vez (modo curto) ou frase completa com palavra ativa destacada.
+**Texto vem do roteiro, tempo vem do áudio.** A legenda é o roteiro aprovado, palavra por palavra; o
+`transcript.json` só fornece **quando** cada palavra acontece. Se o ASR ouviu "orçamento" como
+"orçamendo", a legenda continua "orçamento" — alinhe as palavras do roteiro aos tempos por posição
+(nunca pelo texto, ou uma palavra repetida pega o tempo errado) e descarte tokens que não são palavra.
+
+- Agrupe em **2–3 palavras** (alta energia), **3–5** (conversacional) ou **4–6** (calmo); quebre no fim
+  de frase ou numa pausa ≥ 150 ms. **Um grupo visível por vez**, abrindo no início da primeira palavra e
+  fechando no fim da última, com kill duro no fim (`tl.to(grupo,{opacity:0},t−0,12)` + `tl.set(grupo,{opacity:0,visibility:"hidden"},t)`).
+- Legenda que começa em 0 s parece pré-existente: comece 0,1–0,3 s depois do corte.
+- Container **full-width absoluto, centrado por `text-align`** — nunca `left: 50%; transform: translateX(-50%)`,
+  que corta nas bordas. `overflow: visible` (senão o glow e a palavra em escala são cortados).
+- Tamanho que cabe: `window.__hyperframes.fitTextFontSize(texto, { fontFamily, fontWeight, maxWidth })`
+  devolve `{ fontSize }` (portrait: `maxWidth` 900; base 78, mínimo 42). Palavra que cresce por ênfase:
+  divida o `maxWidth` pela escala.
+- Posição: portrait **≈ 600–700 px do rodapé**, landscape 80–120 px; nunca sobre o rosto, dentro da
+  caixa segura. Cada grupo absoluto (em flex, um grupo com `visibility:hidden` continua ocupando espaço
+  e empurra o próximo).
+- Fade no grupo **ou** nas palavras, nunca nos dois (as opacidades se multiplicam e viram um "pop").
+- Sobre imagem: escolha o blend pelo brilho atrás do texto (0–60 `screen`, 60–180 `overlay`, >180
+  `normal` com cor opaca); legenda sobre imagem com brilho > 60 leva scrim do tamanho do texto, não uma
+  barra full-width.
 - Palavra ativa muda de cor ou escala levemente (+5 a 10%), sem pular o layout.
 - Contraste alto com o fundo (fundo semitransparente ou contorno, quando necessário).
-- Margens seguras respeitadas: em 9:16, conteúdo na faixa central, longe do topo e do rodapé onde as plataformas colocam interface.
-- Sincronia com os timestamps por palavra da transcrição, já ajustados aos cortes.
+- Margens seguras respeitadas (§6): em 9:16, conteúdo na faixa central, longe do topo e do rodapé onde
+  as plataformas colocam interface.
 
 ## 6. Layout em zonas (9:16 e 16:9)
 
@@ -212,7 +232,22 @@ O layout nasce sem sobreposição quando cada conteúdo tem sua zona:
 4. **Ancore os decorativos na própria zona** — partículas centradas no selo, linha de motivo abaixo da frase, grid no fundo — e marque-os com `data-layout-ignore`.
 5. **Feche com snapshot no meio da cena:** cada zona mostra seu protagonista com respiro ao redor. O `npx hyperframes check` valida overflow, sobreposição, contraste e erros de runtime; respiro e composição você confere nos próprios snapshots.
 
+**Zonas de interface por plataforma (9:16, 1080×1920) — reserve, não desenhe:**
+
+| Plataforma | Topo | Rodapé | Direita | Consequência |
+|---|---|---|---|---|
+| Reels / Stories | 220 px | 350 px | — | legenda entre y≈1300 e 1560; CTA acima de 1560 |
+| TikTok | 220 px | 380 px | 140 px | nada essencial sob a coluna de ações |
+| Shorts | 160 px | 320 px | 140 px | barra de progresso e canal embaixo |
+
+São valores conservadores (a interface muda); o que não muda é a regra: **conteúdo essencial mora na
+faixa central**, e o `check --caption-zone` reforça isso na verificação.
+
 ## 7. Receitas de tela (use uma por cena, repetindo no vídeo inteiro)
+
+Cada receita tem **código de partida verificado** em `receitas/` (lint e check limpos): copie a mais
+próxima, troque o prefixo dos ids, os tokens e o texto — e mantenha o contrato (`.clip` guarda o tempo,
+o filho anima; `fromTo`; gancho visível no frame 0).
 
 | Tela | Composição | Movimento |
 |---|---|---|
@@ -237,7 +272,7 @@ Cada cena que repete a receita reforça a identidade do vídeo. **Duas ou três 
 8. **Assets decorativos nascem prontos:** arte com fundo de papel ou scan vira PNG transparente (cor ou luminância removida); licença de uso comercial livre e créditos registrados num `CREDITOS.md` junto dos arquivos. Texturas e fundos intencionais ficam como estão.
 9. Comandos do HyperFrames: `npx hyperframes check` depois de cada edição (o `npm run check` do projeto scaffolded aponta para ele); `check --snapshots` na primeira passada inteira; snapshot triplo só em animação nova ou suspeita; render só depois da verificação.
 10. **Mecânica bespoke com caixa herdada** (troca de caractere por gráfico): um glifo-fantasma com `visibility: hidden` fixa a caixa natural do caractere (largura, altura e baseline vêm da métrica da fonte) — as letras vizinhas nunca se movem; caixa sem glifo usa um span com largura e altura fixas como fantasma. A máscara é `overflow: hidden` nessa caixa; a letra sai e o gráfico sobe dentro dela (ou gira em Y), por 8–12 quadros a 30 fps (≈0,27–0,4 s); o gráfico segura 0,6–1,2 s com um micro-gesto e devolve a letra. Verificação: comparar a posição das letras vizinhas em três snapshots (antes, meio, depois) — diferença de 0 px.
-11. **`.clip` guarda o tempo, não o movimento.** O elemento com `class="clip"` define `data-start`, `data-duration` e `data-track-index`; quem anima é o **filho** dele — ou, no máximo, a `opacity` do próprio clip. Animar `transform`, `filter` ou `visibility` no `.clip` falha o lint (`gsap_animates_clip_element`); para esconder use `tl.set`, nunca tween de `visibility`. E `data-start` de um clip é o tempo real do playhead, nunca um 0 silencioso.
+11. **`.clip` guarda o tempo, não a visibilidade.** O elemento com `class="clip"` define `data-start`, `data-duration` e `data-track-index`; a entrada anima o **filho** (recomendado) ou, no próprio clip, `transform` e `opacity`. Nunca `visibility`, `display` ou `autoAlpha` no `.clip`: o framework é dono da visibilidade do clip e o lint falha (`gsap_animates_clip_element`). Para esconder, use `tl.set` no filho, nunca tween de `visibility`. E `data-start` de um clip é o tempo real do playhead, nunca um 0 silencioso.
 12. **Contrato de cena.** Cada cena é um `compositions/*.html` com tudo dentro de `<template>` (style + root + script; o que fica fora é descartado). O `id` do host, o `id` do root da cena e a chave de `window.__timelines[...]` são o **mesmo** nome — se divergirem, o render espera 45 s por cena e mostra frame estático. Use `fromTo`, nunca `from` (a cena é re-buscada a cada entrada e o `from` deriva). Nunca faça `add()` da timeline da cena na timeline raiz; só a raiz é pausada, e você nunca chama `play()`.
 13. **Fontes resolvíveis.** As empacotadas resolvem pelo nome: Inter, Montserrat, Outfit, Nunito, Oswald, League Gothic, Archivo Black, Space Mono, IBM Plex Mono, JetBrains Mono, EB Garamond, Playfair Display, Source Code Pro, Noto Sans JP, Roboto, Open Sans, Lato, Poppins. Qualquer outra família exige `@font-face` no arquivo que a usa, ou o lint falha (`font_family_without_font_face`).
 
@@ -272,5 +307,8 @@ Cada cena que repete a receita reforça a identidade do vídeo. **Duas ou três 
 - [ ] Cores, fontes, easings e durações iguais para elementos do mesmo tipo
 - [ ] Duas ou três transições, suaves e repetidas nas mesmas viradas
 - [ ] Áudio com fade nas emendas e mix normalizado (≈ −14 LUFS, teto −1,5 dBTP) — conferido no MP4 final
+- [ ] Legenda com o texto do **roteiro aprovado** (não o que o ASR ouviu), tempo conferido nos cues e um grupo visível por vez
+- [ ] Frame 0 mostra o gancho no próprio `index.html` (cenas montadas não contam para o audit de frame 0)
+- [ ] `.clip` sem tween de `visibility`/`display`/`autoAlpha`; entrada animando o filho
 - [ ] Sistema de layout (eixo, margens, zonas) registrado no `plano.md` e seguido por todas as cenas; estado final de cada cena olhado no snapshot (`robustez.md`)
 - [ ] `npx hyperframes check` sem erros, avisos revisados um a um, e render concluído

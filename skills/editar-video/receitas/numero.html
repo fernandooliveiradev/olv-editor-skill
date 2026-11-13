@@ -1,0 +1,51 @@
+<template>
+  <!-- Receita: NÚMERO / ESTATÍSTICA. Troque o prefixo "rn-". Valor final em data-valor. -->
+  <style>
+    #receita-numero { position: absolute; inset: 0; background: var(--ground, #0b0b12); }
+    #rn-cena { position: absolute; inset: 0; }
+    #rn-conteudo { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center;
+      gap: 64px; padding: 0 90px; font-family: var(--font-display, Inter, sans-serif); }
+    #rn-numero { color: var(--accent, #ff5a3c); font-size: 300px; font-weight: 900; line-height: 0.86;
+      letter-spacing: -0.05em; display: flex; align-items: flex-start; }
+    #rn-simbolo { font-size: 120px; margin-top: 24px; margin-left: 6px; color: var(--ink, #f4f4f5); }
+    #rn-rotulo { color: var(--ink, #f4f4f5); font-size: 64px; font-weight: 800; line-height: 1.05; max-width: 820px; }
+    #rn-apoio { color: var(--muted, #a1a1aa); font-size: 44px; font-weight: 500; line-height: 1.25; max-width: 780px; }
+    #rn-trilho { width: 100%; height: 14px; border-radius: 7px; background: #1e1e28; overflow: hidden; }
+    #rn-preenchido { width: 100%; height: 100%; border-radius: 7px; background: var(--accent, #ff5a3c);
+      transform-origin: left center; }
+  </style>
+
+  <div id="receita-numero" data-composition-id="receita-numero" data-width="1080" data-height="1920">
+    <div id="rn-cena" class="clip" data-start="0" data-duration="5" data-track-index="1">
+      <div id="rn-conteudo">
+      <div id="rn-numero"><span id="rn-contador" data-valor="68">0</span><span id="rn-simbolo">%</span></div>
+      <p id="rn-rotulo">dos orçamentos morrem no silêncio</p>
+      <p id="rn-apoio">Não é preço. É tempo de resposta.</p>
+      <div id="rn-trilho"><div id="rn-preenchido"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const alvo = Number(document.querySelector("#rn-contador").dataset.valor);
+
+    // Count-up: objeto numérico animado, texto escrito no onUpdate (determinístico)
+    const estado = { n: 0 };
+    tl.fromTo(
+      estado, { n: 0 }, {
+        n: alvo, duration: 0.9, ease: "power2.out",
+        onUpdate: () => { document.querySelector("#rn-contador").textContent = Math.round(estado.n); },
+      }, 0.25,
+    );
+    // Trilho preenche no mesmo passe e mesmo easing
+    tl.fromTo("#rn-preenchido", { scaleX: 0 }, { scaleX: 0.68, duration: 0.9, ease: "power2.out" }, 0.25);
+    tl.fromTo("#rn-rotulo", { y: 26 }, { y: 0, duration: 0.5, ease: "power3.out" }, 0);
+    tl.fromTo("#rn-apoio", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 1.15);
+    // Micro-overshoot quando o número trava
+    tl.fromTo("#rn-numero", { scale: 1 }, { scale: 1.04, duration: 0.1, ease: "power2.out" }, 1.15);
+    tl.fromTo("#rn-numero", { scale: 1.04 }, { scale: 1, duration: 0.18, ease: "power2.out", immediateRender: false }, 1.25);
+    tl.fromTo("#rn-conteudo", { opacity: 1 }, { opacity: 0, duration: 0.24, ease: "power2.in" }, 4.76);
+    window.__timelines["receita-numero"] = tl;
+  </script>
+</template>
