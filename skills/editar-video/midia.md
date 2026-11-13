@@ -96,7 +96,9 @@ Mídia remota nunca é baixada no render: **todo `src` é um arquivo local** den
 
 ## 4. Voz, música e efeitos
 
-- **De onde vem:** `media-use` resolve SFX do pacote local (21 sons, sem login) e música/imagem/voz pelo
+- **Trilha:** a biblioteca do estúdio (`musica.md`) — `olv-musica listar` escolhe por bpm/LRA e
+  `olv-musica usar` copia para o projeto com o `<audio>` pronto e o crédito.
+- **De onde vem (SFX e imagem):** `media-use` resolve SFX do pacote local (21 sons, sem login) e música/imagem/voz pelo
   catálogo HeyGen (login grátis) ou pelo arquivo do cliente. O arquivo cai em `.media/` com um
   `manifest.jsonl`; referencie esse caminho local (`.media/audio/sfx/sfx_001.mp3`) ou mova para `assets/` —
   o contrato é só um: `src` local, nunca remoto.

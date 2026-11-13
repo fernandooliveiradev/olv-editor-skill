@@ -9,7 +9,7 @@ Fluxo completo para três modos de trabalho. Antes de começar, leia os quatro a
 mesma pasta): `motion-style.md` rege o dicionário de motion, o ritmo, o layout em zonas, as receitas de
 tela e as regras de GSAP; `templates-gravacao.md` rege a estrutura do roteiro, o gancho, a chamada e a
 checklist de entrega de cada formato; `midia.md` traz as regras de `<video>`/`<audio>`/`.clip` que
-quebram o render; `robustez.md` é só processo e verificação (sistema em números, medir em vez de supor,
+quebram o render; `musica.md` é a biblioteca de trilhas (escolher, usar e mixar); `robustez.md` é só processo e verificação (sistema em números, medir em vez de supor,
 ciclo de snapshot, relato honesto) e não impõe visual. `receitas/` tem código de partida verificado para
 as seis telas; `plano-template.md` é o esqueleto do `plano.md`.
 
@@ -193,10 +193,12 @@ etapa. Só aqui o projeto nasce e os arquivos entram. Ordem interna: projeto →
    takes errados numa tabela **numerada (início–fim, texto, motivo)** no `plano.md` §6 e **ESPERE a
    aprovação**. Aplicados os cortes, mantenha áudio e vídeo sincronizados, deixe pausas naturais e gere
    `limpo.mp4`.
-7. **Música, SFX, imagens e logo:** carregue `media-use` (`media-use resolve --type <bgm|sfx|image|logo>
-   --intent "..." --project .`) e traga tudo para o projeto — o arquivo cai em `.media/` com manifesto
-   (SFX sai do pacote local, sem login; música/imagem exigem login grátis no HeyGen ou asset do cliente).
-   Render nunca busca mídia remota. Música sem licença não entra; créditos em `CREDITOS.md`.
+7. **Música, SFX, imagens e logo:** para trilha, use a biblioteca do estúdio — `olv-musica listar --bpm
+   100-125 --lra 4-12` escolhe por medida, e `olv-musica usar "<faixa>" --projeto .` copia, imprime o
+   `<audio>` e credita (regras e mapa de decisão em `musica.md`). SFX e imagens: `media-use resolve` (SFX
+   sai do pacote local, sem login; imagem exige login grátis no HeyGen ou asset do cliente), que grava em
+   `.media/` com manifesto. Render nunca busca mídia remota. Música sem licença não entra; créditos em
+   `CREDITOS.md`.
 8. **Stories:** cada tela é uma composição própria (Etapa 7 renderiza uma por uma); enquete/quiz/botão
    são nativos do app e não entram queimados (regras em `templates-gravacao.md` §2).
 

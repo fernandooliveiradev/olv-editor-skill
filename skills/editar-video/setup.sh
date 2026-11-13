@@ -50,9 +50,9 @@ fi
 if command -v ffmpeg >/dev/null 2>&1; then ok "ffmpeg $(ffmpeg -version | head -1 | cut -d' ' -f3)"; else warn "ffmpeg não encontrado"; fi
 
 say "2/5 Pastas fora dos projetos"
-mkdir -p "$OLV_HOME"/{bin,tools,models/hf,cache,logs,perfis}
+mkdir -p "$OLV_HOME"/{bin,tools,models/hf,cache,logs,perfis,musicas}
 ok "$OLV_HOME"
-cp "$SKILL_DIR/tools/transcribe.py" "$SKILL_DIR/tools/tts.py" "$OLV_HOME/tools/"
+cp "$SKILL_DIR/tools/transcribe.py" "$SKILL_DIR/tools/tts.py" "$SKILL_DIR/tools/musica.py" "$OLV_HOME/tools/"
 chmod +x "$OLV_HOME/tools/"*.py
 # Guarda de onde as ferramentas vieram e o hash do que foi copiado: o doctor compara
 # depois de um `git pull` e avisa quando o estúdio está rodando código velho.
@@ -110,6 +110,7 @@ EOF
 }
 write_wrapper olv-asr transcribe.py
 write_wrapper olv-tts tts.py
+write_wrapper olv-musica musica.py
 cat > "$OLV_HOME/bin/olv-doctor" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
@@ -136,6 +137,12 @@ fi
 echo "modelos   \$(du -sh "\$OLV_HOME/models" 2>/dev/null | cut -f1)"
 echo "cache     \$(du -sh "\$OLV_HOME/cache" 2>/dev/null | cut -f1)"
 echo "perfis    \$(ls "\$OLV_HOME/perfis" 2>/dev/null | wc -l | tr -d ' ') cliente(s) em \$OLV_HOME/perfis"
+MUSICAS="\${OLV_MUSICAS:-\$OLV_HOME/musicas}"
+if [ -f "\$MUSICAS/musica.json" ]; then
+  echo "trilhas   \$(python3 -c 'import json,sys;print(len(json.load(open(sys.argv[1]))))' "\$MUSICAS/musica.json" 2>/dev/null || echo '?') faixa(s) em \$MUSICAS"
+else
+  echo "trilhas   biblioteca vazia em \$MUSICAS — veja musica.md (sync + index)"
+fi
 
 if [ "\${1:-}" = "--selftest" ]; then
   echo
@@ -155,7 +162,7 @@ if [ "\${1:-}" = "--selftest" ]; then
 fi
 EOF
 chmod +x "$OLV_HOME/bin/olv-doctor"
-ok "olv-asr, olv-tts, olv-doctor"
+ok "olv-asr, olv-tts, olv-musica, olv-doctor"
 
 say "5/5 Modelo do Whisper"
 if [ "$WARM" = "1" ]; then
@@ -177,6 +184,8 @@ cat <<EOF
   Narração:                $OLV_HOME/bin/olv-tts "texto" -v pt-BR-FranciscaNeural -o voz.mp3
   Diagnóstico:             $OLV_HOME/bin/olv-doctor --selftest
   Perfil de marca:         copie a skill em perfis/brand.example.json para $OLV_HOME/perfis/
+  Trilhas:                 olv-musica sync --de <pasta>  &&  olv-musica index
+                           (o link da biblioteca do estúdio está em musica.md)
 
   Projetos continuam limpos: nada disso é gravado na pasta do vídeo.
   Se $OLV_HOME/bin não estiver no PATH:
