@@ -95,6 +95,9 @@ Ele instala tudo **fora da pasta de projetos**, em `~/.olv-studio` (ou `$OLV_HOM
 - Se `~/.olv-studio/venv` não existir, rode o setup e avise do download inicial (pacotes + ≈ 500 MB do
   modelo `small`; `--no-model` adia). Adicione `~/.olv-studio/bin` ao PATH ou chame pelo caminho
   completo; `olv-doctor` mostra o estado.
+- **Feche o pré-voo com `olv-doctor --selftest`:** ele sintetiza uma frase e transcreve de volta. É o que
+  pega rede bloqueada (edge-tts) e modelo ausente **antes** do primeiro vídeo, em vez de no meio dele.
+  O mesmo comando avisa se as ferramentas copiadas ficaram velhas depois de atualizar a skill.
 - Verifique Node.js ≥ 22 e FFmpeg. Se faltar algo, explique como instalar (o setup só avisa, não instala
   pacote de sistema).
 - As skills do HyperFrames são instaladas e atualizadas pela pessoa: use as que estiverem instaladas e,
@@ -103,7 +106,13 @@ Ele instala tudo **fora da pasta de projetos**, em `~/.olv-studio` (ou `$OLV_HOM
 
 ## Etapa 1 — Briefing e formato
 
-**Interaja antes de produzir.** Faça as perguntas em UMA mensagem só — curtas, com opções e uma recomendação — e espere a resposta. Se o usuário já tiver respondido algo, não pergunte de novo: confirme em uma linha e siga.
+**Perfil de marca primeiro (se existir).** Antes de perguntar, procure `~/.olv-studio/perfis/<cliente>.json`
+(modelo em `perfis/brand.example.json`). Se existir, use-o para pré-preencher nicho, público, dor, cores,
+fontes, chamada, termos de busca e provas — e **confirme em uma linha** em vez de reperguntar o que já está
+lá. O campo `nao_usar` é regra dura: nada que esteja nele entra no vídeo. No fechamento, ofereça atualizar
+o perfil com o que mudou (uma marca que publica 3×/semana não pode responder as mesmas 12 perguntas toda vez).
+
+**Interaja antes de produzir.** Faça as perguntas que restarem em UMA mensagem só — curtas, com opções e uma recomendação — e espere a resposta. Se o usuário já tiver respondido algo, não pergunte de novo: confirme em uma linha e siga.
 
 1. **Formato do template** (`templates-gravacao.md`): Reels (25–45 s), Stories (5–7 telas) ou Shorts (20–45 s). O formato define os blocos de tempo, o gancho e a chamada; sem ele, não escreva roteiro. Recomende pelo objetivo: alcance/compartilhamento → Reels; relacionamento e conversão → Stories; busca e ponte para o canal → Shorts. Se não for social (16:9, longa do YouTube, apresentação), siga a mesma entrevista e defina a estrutura livre no `plano.md`, mantendo gancho nos 3 primeiros segundos e uma única chamada.
 2. **Objetivo e meta do vídeo** (autoridade, venda, distribuição, conversa).
@@ -147,7 +156,8 @@ saem dele. Nenhuma cena é escrita antes deste gate.
 
 ## Etapa 3 — Ativos e projeto
 
-Só aqui o projeto nasce e os arquivos entram. Ordem interna: projeto → voz/áudio → cortes (A/C) → mídia.
+Carregue `hyperframes-cli` (projeto e comandos) e `media-use` (voz, música, imagens, logo) nesta
+etapa. Só aqui o projeto nasce e os arquivos entram. Ordem interna: projeto → voz/áudio → cortes (A/C) → mídia.
 
 1. **Projeto:** `npx hyperframes init projeto-video --resolution portrait` (o padrão é **1920×1080**;
    social é 1080×1920) e `npx hyperframes doctor`. O que fica no projeto, e só isso: `index.html`,
@@ -193,8 +203,8 @@ Saída da etapa: `assets/` completo, `plano.md` §6 (cortes) aprovado. **Nenhuma
 
 ## Etapa 4 — Sincronia (só depende dos ativos)
 
-Travar o tempo antes de escrever código evita o retrabalho mais caro: cena pronta que nasce 0,4 s fora do
-cue.
+Carregue `hyperframes-cli` para os comandos de tempo (`beats`) e a leitura da transcrição. Travar o
+tempo antes de escrever código evita o retrabalho mais caro: cena pronta que nasce 0,4 s fora do cue.
 
 1. **Mapa de cues:** abra a transcrição/`voz.words.json` e o beatmap, e mapeie cue → elemento em um
    quadro (ex.: `frase_2 → entrada da frase 2`, `selo → pop do selo`). Registre em `plano.md` §5.
@@ -256,6 +266,8 @@ Gate: `npx hyperframes lint` sem erro. Sem isso, não vá para a verificação.
 
 ## Etapa 6 — Verificação
 
+Carregue `hyperframes-cli` (check, snapshot, preview) e releia `robustez.md` como checklist.
+
 **Verificação com evidência (`robustez.md`):** registre o sistema de layout no `plano.md` §3 antes das
 cenas, olhe o frame final de cada cena e liste os defeitos (ou a ausência deles); sem visão, use medidas
 do DOM e peça a conferência visual ao usuário, dizendo isso na entrega. Defeito que se repete em várias
@@ -299,6 +311,8 @@ sincronia nos cues. Frame 0 mostra o gancho (arte, produto ou linha), nunca uma 
 Gate: `check` sem erro, folha olhada, defeitos listados (ou ausência declarada). **Sem render ainda.**
 
 ## Etapa 7 — Mixagem e render
+
+Carregue `hyperframes-cli` (render, preview) e, se a mixagem pedir tratamento de faixa, `media-use` §mixing.
 
 1. **Mixagem:** normalização em duas passadas com FFmpeg: a primeira mede (`loudnorm=...:print_format=summary`),
    a segunda aplica com os valores medidos (alvo ≈ −14 LUFS, teto −1,5 dBTP, `LRA=9`). Confira com

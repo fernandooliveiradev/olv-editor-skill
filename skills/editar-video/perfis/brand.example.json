@@ -1,0 +1,27 @@
+{
+  "_leia": "Copie para ~/.olv-studio/perfis/<cliente>.json e preencha. A skill lê este perfil no briefing e evita repetir as mesmas 12 perguntas a cada vídeo. Campo ausente = campo a perguntar; campo presente = confirme em uma linha.",
+  "cliente": "clinica-exemplo",
+  "marca": "Clínica Exemplo",
+  "nicho": "saúde / odontologia",
+  "tom": "direto, acolhedor, sem jargão",
+  "publico": "dono de clínica pequena, 1 a 3 cadeiras",
+  "cores": {
+    "fundo": "#0b0b12",
+    "texto": "#f4f4f5",
+    "destaque": "#ff5a3c",
+    "secundaria": "#a1a1aa"
+  },
+  "fontes": { "titulo": "Inter", "corpo": "Inter" },
+  "logo": "assets/logo.svg",
+  "chamada_padrao": "me chame no direct com a palavra ORÇAMENTO",
+  "termos_de_busca": ["agenda cheia", "paciente faltando"],
+  "provas": [
+    { "tipo": "numero", "valor": "68%", "origem": "relatório interno, março/2026" },
+    { "tipo": "caso", "valor": "de 40 para 96 avaliações/mês", "origem": "cliente X, autorizado por escrito" }
+  ],
+  "nao_usar": [
+    "antes e depois sem autorização por escrito",
+    "promessa de resultado clínico",
+    "número sem origem registrada"
+  ]
+}

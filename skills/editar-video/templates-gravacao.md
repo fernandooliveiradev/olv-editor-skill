@@ -2,14 +2,18 @@
 
 Padrão do estúdio para estrutura de roteiro em social. Linguagem profissional, só estrutura,
 atualizado para as regras atuais do Instagram e do YouTube. **Todo vídeo de social nasce dentro de
-um destes três formatos** — o formato é escolhido no Passo 1 da skill e define os blocos de tempo,
+um destes três formatos** — o formato é escolhido na Etapa 1 da skill e define os blocos de tempo,
 o gancho, a chamada e a checklist de entrega.
+
+> Estas faixas, sinais e rotinas são **heurística editorial do estúdio**, não garantia de algoritmo:
+> as plataformas mudam sem avisar. Revise este arquivo a cada trimestre e trate as regras de formato
+> (gancho nos 3 s, uma chamada, legenda embutida) como o que de fato sustenta o vídeo.
 
 ## Como o agente usa este arquivo
 
-1. **Escolher o formato antes do roteiro.** Ofereça Reels, Stories ou Shorts no briefing (Passo 1)
+1. **Escolher o formato antes do roteiro.** Ofereça Reels, Stories ou Shorts no briefing (Etapa 1)
    e não misture estruturas: Stories não tem "gancho de 3 s", Shorts não tem CTA de direct.
-2. **Escrever o roteiro já no template.** No `plano.md`, o roteiro sai em tabela com os blocos e
+2. **Escrever o roteiro já no template.** No `plano.md` §4, o roteiro sai em tabela com os blocos e
    tempos do formato escolhido, o texto exato do gancho, o CTA único e a capa (≤ 6 palavras).
 3. **Converter bloco em cena.** Cada bloco do template vira uma cena (ou um grupo de cenas) na
    composição, com o cue de áudio marcado. O corte/enquadramento muda a cada 3–4 s.

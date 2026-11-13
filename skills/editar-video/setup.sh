@@ -50,10 +50,17 @@ fi
 if command -v ffmpeg >/dev/null 2>&1; then ok "ffmpeg $(ffmpeg -version | head -1 | cut -d' ' -f3)"; else warn "ffmpeg não encontrado"; fi
 
 say "2/5 Pastas fora dos projetos"
-mkdir -p "$OLV_HOME"/{bin,tools,models/hf,cache,logs}
+mkdir -p "$OLV_HOME"/{bin,tools,models/hf,cache,logs,perfis}
 ok "$OLV_HOME"
 cp "$SKILL_DIR/tools/transcribe.py" "$SKILL_DIR/tools/tts.py" "$OLV_HOME/tools/"
 chmod +x "$OLV_HOME/tools/"*.py
+# Guarda de onde as ferramentas vieram e o hash do que foi copiado: o doctor compara
+# depois de um `git pull` e avisa quando o estúdio está rodando código velho.
+printf 'SKILL_DIR=%s\n' "$SKILL_DIR" > "$OLV_HOME/config"
+if command -v sha256sum >/dev/null 2>&1; then HASHER="sha256sum"; else HASHER="shasum -a 256"; fi
+printf 'HASHER=%s\n' "$HASHER" >> "$OLV_HOME/config"
+( cd "$OLV_HOME/tools" && $HASHER ./*.py > "$OLV_HOME/tools.sha256" )
+ok "ferramentas copiadas e versionadas (rerode o setup depois de atualizar a skill)"
 
 say "3/5 Python isolado + faster-whisper + edge-tts"
 if [ -x "$VENV/bin/python" ] && "$VENV/bin/python" -c 'import sys; sys.exit(0 if (3,9) <= sys.version_info[:2] <= (3,13) else 1)' 2>/dev/null; then
@@ -107,13 +114,45 @@ cat > "$OLV_HOME/bin/olv-doctor" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
 OLV_HOME="\$(cd "\$(dirname "\${BASH_SOURCE[0]}")/.." && pwd)"
+SKILL_DIR=""
+HASHER="sha256sum"
+[ -f "\$OLV_HOME/config" ] && . "\$OLV_HOME/config"
 echo "OLV_HOME  \$OLV_HOME"
+echo "skill     \${SKILL_DIR:-não registrada (rode o setup de novo)}"
 echo "node      \$(node -v 2>/dev/null || echo 'não encontrado')"
 echo "ffmpeg    \$(ffmpeg -version 2>/dev/null | head -1 | cut -d' ' -f3 || echo 'não encontrado')"
 echo "python    \$("\$OLV_HOME/venv/bin/python" -V 2>&1)"
 HF_HOME="\$OLV_HOME/models/hf" "\$OLV_HOME/venv/bin/python" -c 'import importlib.metadata as m; print("whisper   faster-whisper", m.version("faster-whisper")); print("tts       edge-tts", m.version("edge-tts"))' 2>/dev/null || echo "pacotes   não instalados"
+
+# Ferramentas copiadas x versão na skill: pega o "git pull sem rerodar o setup"
+if [ -n "\$SKILL_DIR" ] && [ -d "\$SKILL_DIR/tools" ] && [ -f "\$OLV_HOME/tools.sha256" ]; then
+  if ( cd "\$SKILL_DIR/tools" && \$HASHER -c "\$OLV_HOME/tools.sha256" >/dev/null 2>&1 ); then
+    echo "tools     atualizadas"
+  else
+    echo "tools     DESATUALIZADAS — rode bash \"\$SKILL_DIR/setup.sh\" de novo"
+  fi
+fi
+
 echo "modelos   \$(du -sh "\$OLV_HOME/models" 2>/dev/null | cut -f1)"
 echo "cache     \$(du -sh "\$OLV_HOME/cache" 2>/dev/null | cut -f1)"
+echo "perfis    \$(ls "\$OLV_HOME/perfis" 2>/dev/null | wc -l | tr -d ' ') cliente(s) em \$OLV_HOME/perfis"
+
+if [ "\${1:-}" = "--selftest" ]; then
+  echo
+  echo "autoteste (o que mais falha no primeiro vídeo)"
+  VOZ="\$OLV_HOME/logs/selftest.mp3"
+  if "\$OLV_HOME/bin/olv-tts" "teste do estúdio, um dois três" -v pt-BR-FranciscaNeural -o "\$VOZ" --words-out "\$OLV_HOME/logs/selftest.words.json" >/dev/null 2>&1; then
+    echo "  ✓ tts   síntese funcionando (rede ok)"
+  else
+    echo "  ✗ tts   falhou — edge-tts precisa de rede; verifique proxy/firewall"
+  fi
+  if [ -s "\$VOZ" ] && "\$OLV_HOME/bin/olv-asr" "\$VOZ" -l pt -m small -o "\$OLV_HOME/logs/selftest.json" >/dev/null 2>&1; then
+    echo "  ✓ asr   transcrição com timestamps funcionando"
+  else
+    echo "  ✗ asr   falhou — confira o modelo do Whisper em \$OLV_HOME/models/hf"
+  fi
+  echo "  (arquivos do teste em \$OLV_HOME/logs/)"
+fi
 EOF
 chmod +x "$OLV_HOME/bin/olv-doctor"
 ok "olv-asr, olv-tts, olv-doctor"
@@ -136,7 +175,8 @@ cat <<EOF
   Ferramentas da máquina:  $OLV_HOME
   Transcrição:             $OLV_HOME/bin/olv-asr audio.wav -l pt -m small
   Narração:                $OLV_HOME/bin/olv-tts "texto" -v pt-BR-FranciscaNeural -o voz.mp3
-  Diagnóstico:             $OLV_HOME/bin/olv-doctor
+  Diagnóstico:             $OLV_HOME/bin/olv-doctor --selftest
+  Perfil de marca:         copie a skill em perfis/brand.example.json para $OLV_HOME/perfis/
 
   Projetos continuam limpos: nada disso é gravado na pasta do vídeo.
   Se $OLV_HOME/bin não estiver no PATH:

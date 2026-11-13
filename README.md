@@ -9,11 +9,13 @@ e entrega no formato do Reels, do Stories ou do Short.
 
 - **Vídeo 9:16 renderizado (MP4 1080×1920)** — cenas em motion graphics sincronizadas
   frame a frame com a fala, nunca tela parada.
-- **Legenda karaokê** — palavra ativa destacada no ritmo da voz (transcrição com
-  timestamps por palavra).
+- **Legenda karaokê** — palavra ativa destacada no ritmo da voz, com o texto do **roteiro
+  aprovado** (a transcrição só fornece o tempo).
 - **Voz de IA em pt-BR** ou a sua narração tratada (ruído, volume, cortes no silêncio).
 - **Estrutura pronta para publicar** — gancho, chamada única e checklist das regras
-  atuais do Instagram e do YouTube (templates 2026/2027).
+  atuais do Instagram e do YouTube.
+- **Receitas de tela verificadas** — seis cenas HTML+GSAP prontas para copiar (pergunta,
+  número, lista, produto, editorial, CTA), testadas com `lint` e `check` limpos.
 - **Instalação limpa** — tudo se instala uma vez, fora da pasta do projeto, em
   `~/.olv-studio`. Seus projetos nunca misturam dependência com entrega.
 
@@ -23,12 +25,19 @@ e entrega no formato do Reels, do Stories ou do Short.
 seu texto + áudio (ou voz de IA)
         │
         ▼
- 1  briefing — formato, objetivo, dor, prova e chamada (uma rodada de perguntas)
- 2  roteiro aprovado por você — bloco a bloco, no template do formato
- 3  produção — cena por cena em HTML + GSAP (HyperFrames)
- 4  verificação — lint, contraste e snapshot frame a frame
- 5  entrega — MP4 mixado (−14 LUFS) + plano de pós-publicação
+  0  pré-voo — máquina e modelos, uma vez
+  1  briefing — formato, objetivo, dor, prova e chamada (perfil de marca evita reperguntar)
+  2  roteiro aprovado por você — bloco a bloco, no template do formato     ← gate
+  3  ativos — voz/TTS, música, imagens, cortes do vídeo gravado            ← gate
+  4  sincronia — cues, beatmap e o texto da legenda travados               ← gate
+  5  cenas — receita por cena em HTML + GSAP (HyperFrames)
+  6  verificação — check, folha de revisão, celular e motion sidecar       ← gate
+  7  mixagem + render — −14 LUFS, MP4 conferido no ffprobe
+  8  entrega — arquivos, relato do que foi verificado e pós-publicação
 ```
+
+Cada etapa tem uma saída concreta e um gate; a skill **proíbe adiantar etapa** (roteiro antes do
+formato, cena antes do ativo, render antes da verificação). O vídeo é feito numa ordem só.
 
 ## Instalação (3 passos)
 
@@ -37,13 +46,14 @@ seu texto + áudio (ou voz de IA)
 git clone https://github.com/fernandooliveiradev/olv-editor-skill
 cp -r olv-editor-skill/skills/editar-video ~/.config/opencode/skills/
 #   (outro harness: copie para a pasta de skills dele — Claude Code usa .claude/skills/,
-#    Cursor e afins: anexe SKILL.md + motion-style.md + templates-gravacao.md + robustez.md)
+#    Cursor e afins: anexe SKILL.md + os arquivos companheiros)
 
 # 2) O motor de render (HyperFrames)
 npx hyperframes skills
 
 # 3) O estúdio: transcrição, voz de IA e modelos — fora dos projetos
 bash skills/editar-video/setup.sh
+~/.olv-studio/bin/olv-doctor --selftest   # testa síntese de voz e transcrição de verdade
 ```
 
 ## Uso
@@ -61,7 +71,8 @@ legenda, chamada, capa, hashtags).
 
 | Onde | O quê |
 |---|---|
-| `~/.olv-studio` | Python isolado, faster-whisper, edge-tts, modelo do Whisper, cache |
+| `~/.olv-studio` | Python isolado, faster-whisper, edge-tts, modelo do Whisper, cache, perfis de marca |
+| `~/.olv-studio/perfis/<cliente>.json` | o perfil da marca: cores, fontes, chamada, provas, o que não usar |
 | `~/.cache` e `~/.npm` | navegador e pacotes do HyperFrames |
 | a pasta do seu projeto | **só o vídeo**: `index.html`, `compositions/`, `assets/`, `renders/`, `plano.md` |
 
@@ -69,19 +80,23 @@ Comandos do estúdio (depois do `setup.sh`):
 
 ```bash
 olv-asr  audio.wav -l pt -m small -o assets/audio/transcript.json   # transcrição
-olv-tts  "texto da narração" -v pt-BR-FranciscaNeural -o voz.mp3    # voz + palavras
-olv-doctor                                                     # diagnóstico
+olv-tts  --text-file roteiro.txt -v pt-BR-FranciscaNeural -o voz.mp3 # voz + palavras
+olv-doctor --selftest                                               # diagnóstico real (síntese + ASR)
 ```
 
 ## Conteúdo da skill
 
 | Arquivo | Função |
 |---|---|
-| `SKILL.md` | o fluxo completo: briefing, produção por modo (A/B/C), verificação, entrega |
-| `motion-style.md` | padrão de movimento, layout em zonas e regras de GSAP |
-| `templates-gravacao.md` | estruturas de Reels, Stories e Shorts (2026/2027) |
+| `SKILL.md` | as 8 etapas com gate, o mapa de skills do HyperFrames e o que não se adianta |
+| `motion-style.md` | dicionário de motion, ritmo, layout em zonas, receitas de tela, regras de GSAP |
+| `templates-gravacao.md` | estruturas de Reels, Stories e Shorts (roteiro, gancho, chamada, entregável) |
+| `midia.md` | as regras de `<video>`/`<audio>`/`.clip` que quebram o render, e a mixagem |
 | `robustez.md` | processo e verificação para qualquer modelo (sem impor visual) |
-| `setup.sh` + `tools/` | bootstrap da máquina e os comandos `olv-*` |
+| `plano-template.md` | o esqueleto do `plano.md`: estado retomável, tokens, layout em px, cues, cortes |
+| `receitas/` | seis cenas HTML+GSAP verificadas, uma por tipo de tela |
+| `perfis/brand.example.json` | modelo do perfil de marca (evita repetir o briefing toda semana) |
+| `setup.sh` + `tools/` | bootstrap da máquina, comandos `olv-*` e autoteste |
 
 ## Requisitos
 
